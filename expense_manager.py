@@ -56,19 +56,93 @@ class ExpenseTracker:
         return self.budget
 
 
-# Example Usage
-tracker = ExpenseTracker()
-tracker.set_budget('Marketing', 5000)
-tracker.set_budget('Development', 10000)
+# Just for the command line interface
+def CLI():
+    tracker = ExpenseTracker()
 
-tracker.add_expense('Marketing', 1500, 'Social media ads')
-tracker.add_expense('Development', 2000, 'Software tools')
+    while True:
+        print("\nExpense Tracker CLI")
+        print("1. Set Budget")
+        print("2. Add Expense")
+        print("3. Approve Expense")
+        print("4. Disapprove Expense")
+        print("5. View All Expenses")
+        print("6. View Approved Expenses")
+        print("7. View Budgets")
+        print("8. Exit")
 
-# Approving the first expense
-tracker.approve_expense(0)
+        choice = input("Enter your choice: ")
 
-# Disapproving the second expense
-tracker.disapprove_expense(1)
+        if choice == "1":
+            category = input("Enter category: ")
+            try:
+                amount = float(input("Enter budget amount: "))
+                tracker.set_budget(category, amount)
+                print(f"Budget set for {category}: {amount}")
+            except ValueError:
+                print("Invalid amount. Please enter a number.")
 
-# Displaying all expenses
-print("All Expenses:", tracker.get_expenses())
+        elif choice == "2":
+            category = input("Enter category: ")
+            try:
+                amount = float(input("Enter expense amount: "))
+                description = input("Enter description: ")
+                tracker.add_expense(category, amount, description)
+                print(f"Expense added for category {category}: {amount} - {description}")
+            except ValueError:
+                print("Invalid amount. Please enter a number.")
+
+        elif choice == "3":
+            try:
+                expense_index = int(input("Enter expense index to approve: "))
+                tracker.approve_expense(expense_index)
+            except ValueError:
+                print("Invalid index. Please enter a number.")
+
+        elif choice == "4":
+            try:
+                expense_index = int(input("Enter expense index to disapprove: "))
+                tracker.disapprove_expense(expense_index)
+            except ValueError:
+                print("Invalid index. Please enter a number.")
+
+        elif choice == "5":
+            expenses = tracker.get_expenses()
+            if expenses:
+                print("\nAll Expenses:")
+                for idx, expense in enumerate(expenses):
+                    print(f"Index {idx}: {expense}")
+            else:
+                print("No expenses recorded.")
+
+        elif choice == "6":
+            approved_expenses = tracker.get_approved_expenses()
+            if approved_expenses:
+                print("\nApproved Expenses:")
+                for expense in approved_expenses:
+                    print(expense)
+            else:
+                print("No approved expenses.")
+
+        elif choice == "7":
+            budget = tracker.get_budget()
+            if budget:
+                print("\nBudgets:")
+                for category, amount in budget.items():
+                    print(f"{category}: {amount}")
+            else:
+                print("No budgets set.")
+
+        elif choice == "8":
+            print("Exiting Expense Tracker. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    CLI()
+
+
+
