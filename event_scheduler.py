@@ -49,7 +49,49 @@ class EventScheduler:
         return "\n".join(removed_events) if removed_events else "No past events to remove."
 
 
+# Just for the command line interface
+def CLI():
+    scheduler = EventScheduler()
+
+    while True:
+        print("\nEvent Scheduler CLI")
+        print("1. Add Event")
+        print("2. View Events")
+        print("3. Remove Event")
+        print("4. Remove Past Events")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            date_time = input("Enter event date and time (YYYY-MM-DD HH:MM): ")
+            description = input("Enter event description: ")
+            result = scheduler.add_event(date_time, description)
+            print(result)
+
+        elif choice == "2":
+            print("\nScheduled Events:")
+            print(scheduler.view_events())
+
+        elif choice == "3":
+            try:
+                event_id = int(input("Enter the event ID to remove: "))
+                result = scheduler.remove_event(event_id)
+                print(result)
+            except ValueError:
+                print("Invalid input. Please enter a valid event ID.")
+
+        elif choice == "4":
+            result = scheduler.remove_past_events()
+            print(result)
+
+        elif choice == "5":
+            print("Exiting Event Scheduler. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
 
 
-
-
+if __name__ == "__main__":
+    CLI()
