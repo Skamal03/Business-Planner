@@ -1,87 +1,97 @@
-import tkinter as tk
-from tkinter import messagebox
 from datetime import datetime
 
-
-# TaskNode class
-class TaskNode:
-    def __init__(self, task_id, description, priority, deadline):
-        self.task_id = task_id
-        self.description = description
-        self.priority = priority
-        self.deadline = deadline  # deadline should be a datetime object
-        self.next = None
-
-
-# TaskManager class
-class TaskManager:
+class EventScheduler:
     def __init__(self):
-        self.head = None
-        self.task_counter = 0
+        self.event_scheduler = {}
+        self.event_counter = 1  # To generate unique IDs for events
 
-    def add_task(self, description, priority, deadline):
-        task_id = self.task_counter
-        self.task_counter += 1
+    # Function to add an event
+    def add_event(self, date_time, description):
+        try:
+            date_time_obj = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+            event_id = self.event_counter
+            self.event_scheduler[event_id] = {
+                "date_time": date_time_obj,
+                "description": description
+            }
+            self.event_counter += 1
+            return f"Event added: ID {event_id} - {date_time_obj} - {description}"
+        except ValueError:
+            return "Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'."
 
-        # Assuming deadline is passed as string 'YYYY-MM-DD HH:MM'
-        deadline_obj = datetime.strptime(deadline, "%Y-%m-%d %H:%M")
-        new_task = TaskNode(task_id, description, priority, deadline_obj)
-
-        if not self.head or priority < self.head.priority:
-            new_task.next = self.head
-            self.head = new_task
+    # Function to view events
+    def view_events(self):
+        if not self.event_scheduler:
+            return "No events scheduled."
         else:
-            current = self.head
-            while current.next and current.next.priority <= priority:
-                current = current.next
-            new_task.next = current.next
-            current.next = new_task
-        return task_id
+            events_list = []
+            for event_id, event in sorted(self.event_scheduler.items(), key=lambda x: x[1]['date_time']):
+                events_list.append(f"ID {event_id}: {event['date_time']} - {event['description']}")
+            return "\n".join(events_list)
 
-    def remove_task(self, task_id):
-        if not self.head:
-            return False
+    # Function to remove an event
+    def remove_event(self, event_id):
+        if event_id in self.event_scheduler:
+            del self.event_scheduler[event_id]
+            return f"Event removed: ID {event_id}"
+        else:
+            return "No event found for that ID."
 
-        if self.head.task_id == task_id:
-            self.head = self.head.next
-            return True
-
-        current = self.head
-        while current.next and current.next.task_id != task_id:
-            current = current.next
-
-        if current.next and current.next.task_id == task_id:
-            current.next = current.next.next
-            return True
-
-        return False
-
-    def view_tasks(self):
-        tasks = []
-        current = self.head
-        while current:
-            tasks.append((
-                current.task_id,
-                current.description,
-                current.priority,
-                current.deadline.strftime("%Y-%m-%d %H:%M")
-            ))
-            current = current.next
-        return tasks
-
-    def remove_past_tasks(self):
-        current = self.head
-        previous = None
+    # Function to automatically remove events that have ended
+    def remove_past_events(self):
         current_time = datetime.now()
+        events_to_remove = [event_id for event_id, event in self.event_scheduler.items() if
+                            event['date_time'] < current_time]
+        removed_events = []
+        for event_id in events_to_remove:
+            del self.event_scheduler[event_id]
+            removed_events.append(f"Event automatically removed: ID {event_id} (Event time has passed)")
+        return "\n".join(removed_events) if removed_events else "No past events to remove."
 
-        while current:
-            if current.deadline < current_time:  # Task deadline has passed
-                if previous:
-                    previous.next = current.next
-                else:
-                    self.head = current.next
-                current = current.next
-            else:
-                previous = current
-                current = current.next
 
+# Just for the command line interface
+def CLI():
+    scheduler = EventScheduler()
+
+    while True:
+        print("\nEvent Scheduler CLI")
+        print("1. Add Event")
+        print("2. View Events")
+        print("3. Remove Event")
+        print("4. Remove Past Events")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            date_time = input("Enter event date and time (YYYY-MM-DD HH:MM): ")
+            description = input("Enter event description: ")
+            result = scheduler.add_event(date_time, description)
+            print(result)
+
+        elif choice == "2":
+            print("\nScheduled Events:")
+            print(scheduler.view_events())
+
+        elif choice == "3":
+            try:
+                event_id = int(input("Enter the event ID to remove: "))
+                result = scheduler.remove_event(event_id)
+                print(result)
+            except ValueError:
+                print("Invalid input. Please enter a valid event ID.")
+
+        elif choice == "4":
+            result = scheduler.remove_past_events()
+            print(result)
+
+        elif choice == "5":
+            print("Exiting Event Scheduler. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    CLI()
