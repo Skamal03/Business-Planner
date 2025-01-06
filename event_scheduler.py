@@ -3,31 +3,56 @@ from datetime import datetime
 class EventScheduler:
     def __init__(self):
         self.event_scheduler = {}
-        self.event_counter = 1  # To generate unique IDs for events
+        self.unique_ids = 1
 
-    # Function to add an event
     def add_event(self, date_time, description):
         try:
-            date_time_obj = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
-            event_id = self.event_counter
+            date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+            event_id = self.unique_ids
             self.event_scheduler[event_id] = {
-                "date_time": date_time_obj,
+                "date_time": date_time,
                 "description": description
             }
-            self.event_counter += 1
-            return f"Event added: ID {event_id} - {date_time_obj} - {description}"
+            self.unique_ids += 1
+            return f"Event added: ID {event_id} - {date_time} - {description}"
         except ValueError:
             return "Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'."
 
-    # Function to view events
+    def sort_events_by_date(self):
+
+        # Convert dictionary to list of tuples
+        event_list = list(self.event_scheduler.items())
+        n = len(event_list)
+
+        for i in range(1, n):
+            key = event_list[i]
+            j = i - 1
+
+            # compare the time of event j  next event(i)
+            while j >= 0 and event_list[j][1]['date_time'] > key[1]['date_time']:
+                event_list[j + 1] = event_list[j]
+                j -= 1
+            event_list[j + 1] = key
+
+        return event_list
+
+
     def view_events(self):
         if not self.event_scheduler:
             return "No events scheduled."
-        else:
-            events_list = []
-            for event_id, event in sorted(self.event_scheduler.items(), key=lambda x: x[1]['date_time']):
-                events_list.append(f"ID {event_id}: {event['date_time']} - {event['description']}")
-            return "\n".join(events_list)
+
+        events_list = []
+
+        # Step 1: Sort the events using a separate function (manual sort)
+        sorted_events = self.sort_events_by_date()
+
+        # Step 2: Loop through each event in the sorted list and format the event information
+        for event_id, event in sorted_events:
+            event_details = f"ID {event_id}: {event['date_time']} - {event['description']}"
+            events_list.append(event_details)
+
+        # Step 3: Join the list of event details into a single string, with each event on a new line
+        return "\n".join(events_list)
 
     # Function to remove an event
     def remove_event(self, event_id):
@@ -37,7 +62,6 @@ class EventScheduler:
         else:
             return "No event found for that ID."
 
-    # Function to automatically remove events that have ended
     def remove_past_events(self):
         current_time = datetime.now()
         events_to_remove = [event_id for event_id, event in self.event_scheduler.items() if
