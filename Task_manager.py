@@ -11,17 +11,17 @@ class TaskNode:
 class TaskManager:
     def __init__(self):
         self.head = None
-        self.task_counter = 0
+        self.id = 0
 
     def add_task(self, description, priority, deadline):
-        task_id = self.task_counter
-        self.task_counter += 1
+        task_id = self.id
+        self.id += 1
 
-        # converts the input time into given format
         deadline = datetime.strptime(deadline, "%Y-%m-%d %H:%M")
         new_task = TaskNode(task_id, description, priority, deadline)
 
-        # sorting the nodes based on priority
+        # traverse and sort
+        # sorts the events based on priority
         if not self.head or priority < self.head.priority:
             new_task.next = self.head
             self.head = new_task
@@ -31,6 +31,7 @@ class TaskManager:
                 current = current.next
             new_task.next = current.next
             current.next = new_task
+
         return task_id
 
     def remove_task(self, task_id):
