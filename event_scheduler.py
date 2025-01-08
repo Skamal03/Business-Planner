@@ -3,17 +3,16 @@ from datetime import datetime
 class EventScheduler:
     def __init__(self):
         self.event_scheduler = {}
-        self.unique_ids = 1
 
     def add_event(self, date_time, description):
         try:
             date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
-            event_id = self.unique_ids
+            event_id = 0
             self.event_scheduler[event_id] = {
                 "date_time": date_time,
                 "description": description
             }
-            self.unique_ids += 1
+            event_id += 1
             return f"Event added: ID {event_id} - {date_time} - {description}"
         except ValueError:
             return "Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'."
@@ -59,7 +58,7 @@ class EventScheduler:
         else:
             return "No event found for that ID."
 
-    
+
     def remove_past_events(self):
         current_time = datetime.now()
         events_removed = 0
