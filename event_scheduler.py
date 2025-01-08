@@ -18,7 +18,7 @@ class EventScheduler:
         except ValueError:
             return "Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'."
 
-    def sort_events_by_date(self):
+    def sort_by_date(self):
 
         # Convert dictionary to list of tuples
         event_list = list(self.event_scheduler.items())
@@ -36,22 +36,19 @@ class EventScheduler:
 
         return event_list
 
-
     def view_events(self):
         if not self.event_scheduler:
             return "No events scheduled."
 
         events_list = []
+        sorted_events = self.sort_by_date()
 
-        # Step 1: Sort the events using a separate function (manual sort)
-        sorted_events = self.sort_events_by_date()
-
-        # Step 2: Loop through each event in the sorted list and format the event information
+        # Loop through each event in the sorted list and format the event information
         for event_id, event in sorted_events:
             event_details = f"ID {event_id}: {event['date_time']} - {event['description']}"
             events_list.append(event_details)
 
-        # Step 3: Join the list of event details into a single string, with each event on a new line
+        # Join the list of event details into a single string, with each event on a new line
         return "\n".join(events_list)
 
     # Function to remove an event
@@ -62,16 +59,20 @@ class EventScheduler:
         else:
             return "No event found for that ID."
 
+    
     def remove_past_events(self):
         current_time = datetime.now()
-        events_to_remove = [event_id for event_id, event in self.event_scheduler.items() if
-                            event['date_time'] < current_time]
-        removed_events = []
-        for event_id in events_to_remove:
-            del self.event_scheduler[event_id]
-            removed_events.append(f"Event automatically removed: ID {event_id} (Event time has passed)")
-        return "\n".join(removed_events) if removed_events else "No past events to remove."
+        events_removed = 0
 
+        for event_id, event in list(self.event_scheduler.items()):
+            if event['date_time'] < current_time:
+                del self.event_scheduler[event_id]
+                events_removed += 1
+
+        if events_removed != 0:
+            return "Past events have been removed."
+        else:
+            return "No past events to remove."
 
 # Just for the command line interface
 def CLI():
