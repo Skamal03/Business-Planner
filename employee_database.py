@@ -76,4 +76,68 @@ class EmployeeDatabase:
         print(f"Employee with ID {employee_id} not found.")
 
 
+# command line
+def CLI():
+    database = EmployeeDatabase()
 
+    while True:
+        print("\nEmployee Database CLI")
+        print("1. Add Employee")
+        print("2. Display Employees")
+        print("3. Search Employee")
+        print("4. Remove Employee")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ").strip()
+
+        if choice == "1":
+            print("Enter personal information:")
+            employee_id = input("Employee ID: ").strip()
+            name = input("Name: ").strip()
+            age = input("Age: ").strip()
+
+            print("Enter contact information:")
+            email = input("Email: ").strip()
+            phone = input("Phone: ").strip()
+
+            print("Enter job details:")
+            position = input("Position: ").strip()
+            salary = input("Salary: ").strip()
+
+            personal_info = {
+                "employee_id": employee_id,
+                "name": name,
+                "age": age,
+            }
+            contact_info = {
+                "email": email,
+                "phone": phone,
+            }
+            job_details = {
+                "position": position,
+                "salary": salary,
+            }
+
+            database.add_employee(personal_info, contact_info, job_details)
+
+        elif choice == "2":
+            database.display_employees()
+
+        elif choice == "3":
+            employee_id = input("Enter the Employee ID to search: ").strip()
+            database.search_employee(employee_id)
+
+        elif choice == "4":
+            employee_id = input("Enter the Employee ID to remove: ").strip()
+            database.remove_employee(employee_id)
+
+        elif choice == "5":
+            print("Exiting Employee Database. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    CLI()
