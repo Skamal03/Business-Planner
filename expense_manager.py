@@ -1,140 +1,149 @@
-class ExpenseTracker:
+class BudgetManager:
     def __init__(self):
-        self.budget = {}  # Stores budgets by category
-        self.expenses = []  # Stores individual expenses
-        self.approved_expenses = []  # Stores approved expenses
+        self.budgets = {}
 
-    def set_budget(self, category, amount):
-        self.budget[category] = amount
-
-    def add_expense(self, category, amount, description):
-        if category not in self.budget:
-            print(f"Error: No budget set for {category}.")
-            return
-        expense = {
+    def add_budget(self, name, amount, category, description):
+                                                                        #adds another dictionary into name(dict)
+        self.budgets[name] = {
             'category': category,
             'amount': amount,
-            'description': description,
-            'status': 'Pending'
+            'description' : description,
+            'approved': False
         }
-        self.expenses.append(expense)
+        print(f"Budget for {name} added successfully!")
 
-    def approve_expense(self, expense_index):
-        if 0 <= expense_index < len(self.expenses):
-            expense = self.expenses[expense_index]
-            if expense['status'] == 'Pending':
-                # Check if the expense exceeds the budget
-                if expense['amount'] <= self.budget[expense['category']]:
-                    expense['status'] = 'Approved'
-                    self.approved_expenses.append(expense)
-                    print(f"Expense approved: {expense}")
-                else:
-                    print("Error: Expense exceeds budget.")
+    def view_budgets(self):
+        if not self.budgets:
+            print("No budgets available.")
+            return
+
+        for name, details in self.budgets.items():
+
+            if details['approved']:
+                status = "Approved"
             else:
-                print("Error: Expense already approved.")
-        else:
-            print("Error: Invalid expense index.")
+                status = "Pending"
 
-    def disapprove_expense(self, expense_index):
-        if 0 <= expense_index < len(self.expenses):
-            expense = self.expenses[expense_index]
-            if expense['status'] == 'Pending':
-                expense['status'] = 'Disapproved'
-                print(f"Expense disapproved: {expense}")
+
+            amount = details['amount']
+            category = details['category']
+            description = details['description']
+
+
+            print(f"Budget Name: {name}")
+            print(f"Amount: Rs {amount}")
+            print(f"Category: {category}")
+            print(f"Description: {description}")
+            print(f"Status: {status}")
+            print("-" * 30)  
+
+
+    def approve_budget(self, name):
+        if name in self.budgets:
+            self.budgets[name]['approved'] = True
+            print(f"Budget for {name} approved.")
+        else:
+            print(f"No budget found with name {name}.")
+
+    def disapprove_budget(self, name):
+        if name in self.budgets:
+            self.budgets[name]['approved'] = False
+            print(f"Budget for {name} disapproved.")
+        else:
+            print(f"No budget found with name {name}.")
+
+class CLI:
+    def __init__(self):
+        self.manager = BudgetManager()
+
+    def display_menu(self):
+        print("\n=== Budget Manager CLI ===")
+        print("1. Add Budget")
+        print("2. View Budgets")
+        print("3. Approve Budget")
+        print("4. Disapprove Budget")
+        print("5. Exit")
+        print("==========================")
+
+    def run(self):
+        while True:
+            self.display_menu()
+            choice = input("Enter your choice: ").strip()
+
+            if choice == "1":
+                self.add_budget()
+            elif choice == "2":
+                self.manager.view_budgets()
+            elif choice == "3":
+                self.approve_budget()
+            elif choice == "4":
+                self.disapprove_budget()
+            elif choice == "5":
+                print("Exiting Budget Manager. Goodbye!")
+                break
             else:
-                print("Error: Expense cannot be disapproved (already approved or disapproved).")
-        else:
-            print("Error: Invalid expense index.")
+                print("Invalid choice. Please try again.")
 
-    def get_expenses(self):
-        return self.expenses
+    def add_budget(self):
+        name = input("Enter budget name: ").strip()
+        try:
+            amount = float(input("Enter budget amount (e.g., 5000): "))
+        except ValueError:
+            print("Invalid amount. Please enter a numeric value.")
+            return
 
-    def get_approved_expenses(self):
-        return self.approved_expenses
+        category = input("Enter budget category (e.g., Marketing, HR): ").strip()
+        description = input("Enter a brief description: ").strip()
+        self.manager.add_budget(name, amount, category, description)
 
-    def get_budget(self):
-        return self.budget
+    def approve_budget(self):
+        name = input("Enter the budget name to approve: ").strip()
+        self.manager.approve_budget(name)
 
+    def disapprove_budget(self):
+        name = input("Enter the budget name to disapprove: ").strip()
+        self.manager.disapprove_budget(name)
 
-# Just for the command line interface
+# Command line interface
 def CLI():
-    tracker = ExpenseTracker()
+    budget_manager = BudgetManager()
 
     while True:
-        print("\nExpense Tracker CLI")
-        print("1. Set Budget")
-        print("2. Add Expense")
-        print("3. Approve Expense")
-        print("4. Disapprove Expense")
-        print("5. View All Expenses")
-        print("6. View Approved Expenses")
-        print("7. View Budgets")
-        print("8. Exit")
+        print("\nBudget Manager CLI")
+        print("1. Add Budget")
+        print("2. View Budgets")
+        print("3. Approve Budget")
+        print("4. Disapprove Budget")
+        print("5. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ").strip()
 
-        if choice == "1":
-            category = input("Enter category: ")
+        if choice == "1":  # Add Budget
+            name = input("Enter budget name: ").strip()
             try:
-                amount = float(input("Enter budget amount: "))
-                tracker.set_budget(category, amount)
-                print(f"Budget set for {category}: {amount}")
+                amount = float(input("Enter budget amount (e.g., 5000): "))
             except ValueError:
-                print("Invalid amount. Please enter a number.")
+                print("Invalid amount. Please enter a numeric value.")
+                continue
+
+            category = input("Enter budget category (e.g., Marketing, HR): ").strip()
+            description = input("Enter a brief description: ").strip()
+
+            budget_manager.add_budget(name, amount, category, description)
 
         elif choice == "2":
-            category = input("Enter category: ")
-            try:
-                amount = float(input("Enter expense amount: "))
-                description = input("Enter description: ")
-                tracker.add_expense(category, amount, description)
-                print(f"Expense added for category {category}: {amount} - {description}")
-            except ValueError:
-                print("Invalid amount. Please enter a number.")
+            budget_manager.view_budgets()
 
         elif choice == "3":
-            try:
-                expense_index = int(input("Enter expense index to approve: "))
-                tracker.approve_expense(expense_index)
-            except ValueError:
-                print("Invalid index. Please enter a number.")
+            name = input("Enter the budget name to approve: ").strip()
+            budget_manager.approve_budget(name)
 
         elif choice == "4":
-            try:
-                expense_index = int(input("Enter expense index to disapprove: "))
-                tracker.disapprove_expense(expense_index)
-            except ValueError:
-                print("Invalid index. Please enter a number.")
+            name = input("Enter the budget name to disapprove: ").strip()
+            budget_manager.disapprove_budget(name)
 
         elif choice == "5":
-            expenses = tracker.get_expenses()
-            if expenses:
-                print("\nAll Expenses:")
-                for idx, expense in enumerate(expenses):
-                    print(f"Index {idx}: {expense}")
-            else:
-                print("No expenses recorded.")
-
-        elif choice == "6":
-            approved_expenses = tracker.get_approved_expenses()
-            if approved_expenses:
-                print("\nApproved Expenses:")
-                for expense in approved_expenses:
-                    print(expense)
-            else:
-                print("No approved expenses.")
-
-        elif choice == "7":
-            budget = tracker.get_budget()
-            if budget:
-                print("\nBudgets:")
-                for category, amount in budget.items():
-                    print(f"{category}: {amount}")
-            else:
-                print("No budgets set.")
-
-        elif choice == "8":
-            print("Exiting Expense Tracker. Goodbye!")
+            print("Exiting Budget Manager. Goodbye!")
             break
 
         else:
@@ -143,6 +152,9 @@ def CLI():
 
 if __name__ == "__main__":
     CLI()
+
+
+
 
 
 
