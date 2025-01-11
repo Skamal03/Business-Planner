@@ -1,1 +1,1 @@
-interface Not Ready Yet but you can use with CLI
+This is my 3rd semester Data structure and algorithm project in python
