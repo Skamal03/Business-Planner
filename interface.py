@@ -48,14 +48,6 @@ def menu():
     menu_button.pack(side="top", anchor="s", padx=5, pady=10)
 
 
-def Tab_label(frame, title, fg_clr, bg_clr):
-    main_label = Label(frame, text=title, font=("Bahnschrift SemiBold", 30,"bold"))
-    main_label.grid(row=0, pady=7, columnspan=4, sticky="ns")
-    main_label.config(fg=fg_clr, bg=bg_clr)
-
-    separator = ttk.Separator(frame, orient="horizontal")
-    separator.grid(row=1, column=0, columnspan=4, sticky="ew", pady=7)
-
 def Tabs():
     global notebook_frame, notebook, about, task_manager, event_manager, expense_manager, employee_database
 
@@ -237,14 +229,12 @@ def About():
     separator.grid(row=1, column=3, columnspan=10, sticky="ew", pady=7)
 
 def Event_manager():
-    Tab_label(task_manager, "Task Manager", "white", "light Blue")
+    pass
 
 def Expense_manager():
-    Tab_label(task_manager, "Task Manager", "white", "light Blue")
-
+    pass
 def Employeer_database():
-    Tab_label(task_manager, "Task Manager", "white", "light Blue")
-
+    pass
 
 
 def bar():
