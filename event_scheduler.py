@@ -55,7 +55,7 @@ class EventScheduler:
             return False
 
 # Just for the command line interface
-def CLI():
+def command_line():
     scheduler = EventScheduler()
 
     while True:
@@ -99,4 +99,4 @@ def CLI():
 
 
 if __name__ == "__main__":
-    CLI()
+    command_line()
