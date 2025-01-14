@@ -7,6 +7,7 @@ from expense_manager import BudgetManager
 from employee_database import EmployeeDatabase
 
 task = TaskManager()
+event = EventScheduler()
 
 root = Tk()
 root.title("Business Planner")
@@ -62,7 +63,6 @@ def Tabs():
         "TNotebook.Tab",
         padding=[10, 10],
         width=15,
-        background="red",
         anchor="center",
         relief="solid",
     )
@@ -73,7 +73,7 @@ def Tabs():
 
     about = Frame(notebook, bg="steel blue", padx=10)
     task_manager = Frame(notebook, bg="light blue", padx=10)
-    event_manager = Frame(notebook, bg="light green", padx=10)
+    event_manager = Frame(notebook, bg="light grey", padx=10)
     expense_manager = Frame(notebook, bg="light pink", padx=10)
     employee_database = Frame(notebook, bg="light pink", padx=10)
 
@@ -131,7 +131,6 @@ def Task_manager():
     t_deadline = Entry(task_manager)
     t_deadline.grid(row=4, column=1, padx=10, pady=10, sticky="w")
 
-    # Handling task function
     def handling_task():
         desc = t_description.get()
         priority = t_priority.get()
@@ -141,7 +140,6 @@ def Task_manager():
     add_b = Button(task_manager, text="Add Task", command=handling_task, width=20)
     add_b.grid(row=6, column=0, padx=10, pady=10, sticky="wn")
 
-    # View task section
     tree_frame = Frame(task_manager)
     tree_frame.grid(row=7, column=0, padx=10, pady=10, columnspan=20, sticky="w")
 
@@ -182,14 +180,12 @@ def Task_manager():
     view_b = Button(task_manager, text="View Task", width=20, command=adding_treeview)
     view_b.grid(row=6, column=1, padx=10, pady=10, sticky="w")
 
-    # Remove Task
-    l3 = Label(task_manager, text="Enter Task ID To Remove", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
+    l3 = Label(task_manager, text="Enter/Select ID To Remove", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
     l3.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
     t_remove = Entry(task_manager)
     t_remove.grid(row=2, column=3, padx=10, pady=10, sticky="w")
 
-    # Refresh Treeview
     def refresh_treeview():
         for row in t_tree.get_children():
             t_tree.delete(row)
@@ -197,21 +193,34 @@ def Task_manager():
         for i in tasks:
             t_tree.insert("", "end", values=i)
 
-    def handle_removal():
+    def remove_task():
         try:
-            task_id = int(t_remove.get())
-            if task.remove_task(task_id):
-                messagebox.showinfo("Success", "Task removed successfully!")
-                refresh_treeview()
+            task_id_input = t_remove.get()
+            if task_id_input:
+                task_id = int(task_id_input)
+                if task.remove_task(task_id) is True:
+                    messagebox.showinfo("Success", "Task removed successfully!")
+                    refresh_treeview()
+                else:
+                    messagebox.showerror("Error", "Task ID not found!")
             else:
-                messagebox.showerror("Error", "Task ID not found!")
+                selected_item = t_tree.selection()
+                if selected_item is not None:
+                    task_id = int(t_tree.item(selected_item[0])['values'][0])
+                    if task.remove_task(task_id) is True:
+                        t_tree.delete(selected_item[0])
+                        messagebox.showinfo("Success", f"Event ID {task_id} removed.")
+                    else:
+                        messagebox.showerror("Error", "Event ID not found.")
+                else:
+                    messagebox.showerror("Error", "Please select an event to remove.")
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid Task ID.")
 
-    remove_b = Button(task_manager, text="Remove Task", width=20, command=handle_removal)
+    remove_b = Button(task_manager, text="Remove Task", width=20, command=remove_task)
     remove_b.grid(row=6, column=2, padx=10, pady=10, sticky="w")
 
-    # Remove Past Tasks
+
     def remove_expired_tasks():
         task.remove_past_tasks()
         messagebox.showinfo("Success", "All expired tasks removed!")
@@ -221,15 +230,165 @@ def Task_manager():
     past_b.grid(row=6, column=3, padx=10, pady=10, sticky="w")
 
 def About():
-    main_label = Label(about, text="Task Manager", font=("Bahnschrift SemiBold", 30,"bold"))
+    main_label = Label(about, text="About", font=("Bahnschrift SemiBold", 30, "bold"))
     main_label.grid(row=0, column=3, pady=7, sticky="n")
-    main_label.config(fg="white", bg="light blue")
+    main_label.config(fg="white", bg="steel blue")
 
     separator = ttk.Separator(about, orient="horizontal")
-    separator.grid(row=1, column=3, columnspan=10, sticky="ew", pady=7)
+    separator.grid(row=1, column=3, columnspan=1, sticky="we", pady=0)
+
+    ownership = Label(about, text="Ownership", bg="steel blue", font=("Bahnschrift SemiBold", 20, "bold"), fg="white")
+    ownership.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+
+    Devloped = Label(about, text="Developed by:", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"), fg="white")
+    Devloped.grid(row=3, column=2, padx=10, pady=10, sticky="w")
+
+    names = Label(about, text="H&S", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
+    names.grid(row=3, column=3, padx=10, pady=10, sticky="w")
+
+    id = Label(about, text="ID:", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"), fg="white")
+    id.grid(row=4, column=2, padx=10, pady=10, sticky="w")
+
+    sap = Label(about, text="56754 & 56804", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
+    sap.grid(row=4, column=3, padx=10, pady=10, sticky="w")
+
+    department = Label(about, text="Department", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"), fg="white")
+    department.grid(row=5, column=2, padx=10, pady=10, sticky="w")
+
+    bscy = Label(about, text="BSCY-3", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
+    bscy.grid(row=5, column=3, padx=10, pady=10, sticky="w")
+
+    rights = Label(about, text="© 2025 All Rights Reserved.", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
+    rights.grid(row=6, column=2, padx=10, pady=10, sticky="w")
+
+    separator = ttk.Separator(about, orient="horizontal")
+    separator.grid(row=7, column=0, columnspan=10, sticky="ew", pady=10)
+
+    project = Label(about, text="About this Project", bg="steel blue", font=("Bahnschrift SemiBold", 20), fg="white")
+    project.grid(row=9, column=2, padx=10, pady=10, sticky="s")
+
+    p_details = ("This project is a comprehensive business planner designed to simplify task management, event scheduling, expense tracking, and employee database "
+                 "It provides an intuitive interface and efficient tools to enhance productivity and streamline business operations. This app showcases my growing "
+                 "skills in Python, GUI development (Tkinter), and practical problem-solving.")
+
+    details = Label(about, text=p_details, bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white", justify="left", wraplength=500)
+    details.grid(row=10, column=2,columnspan=10 , padx=10, pady=0, sticky="s")
 
 def Event_manager():
-    pass
+    main_label = Label(event_manager, text="Event Manager", font=("Bahnschrift SemiBold", 30, "bold"))
+    main_label.grid(row=0, column=0, columnspan=10, pady=7, sticky="ns")
+    main_label.config(fg="white", bg="light grey")
+
+    separator = ttk.Separator(event_manager, orient="horizontal")
+    separator.grid(row=1, column=0, columnspan=10, sticky="ew", pady=7)
+
+    l1 = Label(event_manager, text="Description:", bg="light grey", font=("Bahnschrift SemiBold", 10), fg="black")
+    l1.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+
+    l2 = Label(event_manager, text="Date/Time:", bg="light grey", font=("Bahnschrift SemiBold", 10), fg="black")
+    l2.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+
+    e_description = Entry(event_manager)
+    e_description.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+
+    e_time = Entry(event_manager)
+    e_time.grid(row=3, column=1, padx=10, pady=10, sticky="w")
+
+    def handling_event():
+        desc = e_description.get()
+        time = e_time.get()
+        event.add_event(time, desc)
+
+    add_b = Button(event_manager, text="Add Event", command=handling_event, width=20)
+    add_b.grid(row=7, column=0, padx=10, pady=10, sticky="w")
+    
+    tree_frame = Frame(event_manager, height=50)
+    tree_frame.grid(row=8, column=0, padx=10, pady=10, columnspan=10, sticky="w")
+
+    e_tree = ttk.Treeview(tree_frame, height=20)
+    e_tree["columns"] = ["ID", "Description", "Date/time"]
+
+    e_tree.column("#0", width=0)
+    e_tree.column("ID", width=50, anchor=W)
+    e_tree.column("Description", width=400, anchor=W)
+    e_tree.column("Date/time", width=200, anchor=W)
+
+    e_tree.heading("#0", text="")
+    e_tree.heading("ID", text="ID", anchor=W)
+    e_tree.heading("Description", text="Description", anchor=W)
+    e_tree.heading("Date/time", text="Date/time", anchor=W)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Bahnschrift SemiBold", 12, 'bold'))
+
+    scrollbar = Scrollbar(tree_frame, command=e_tree.yview)
+    e_tree.config(yscrollcommand=scrollbar.set)
+
+    e_tree.pack(side="left", expand=True, fill="both")
+    scrollbar.pack(side="right", expand=True, fill="both")
+
+    def adding_treeview():
+        for row in e_tree.get_children():
+            e_tree.delete(row)
+        events = event.view_events() 
+        
+        if not events:
+            messagebox.showinfo("Empty", "No Events Added Yet")
+        else:
+            for x in events:
+                e_tree.insert("", "end", values=x)
+
+    view_b = Button(event_manager, text="View Events", width=20, command=adding_treeview)
+    view_b.grid(row=7, column=1, padx=10, pady=10, sticky="w")
+
+    l3 = Label(event_manager, text="Enter/Select ID To Remove", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
+    l3.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+
+    e_remove=Entry(event_manager)
+    e_remove.grid(row=2, column=3, padx=10, pady=10, sticky="w")
+
+    def refresh_treeview():
+        for row in e_tree.get_children():
+            e_tree.delete(row)
+        events = event.view_events()
+        for i in events:
+            e_tree.insert("", "end", values=i)
+
+    def remove_event():
+        try:
+            input_id = e_remove.get()
+            if input_id:
+                event_id = int(input_id)
+                if event.remove_event(event_id) is True:
+                    messagebox.showinfo("Success", "Event removed successfully!")
+                    refresh_treeview()
+                else:
+                    messagebox.showerror("Error", "Event ID not found!")
+            else:
+                selected_item = e_tree.selection()
+                if selected_item:
+                    event_id = int(e_tree.item(selected_item[0])['values'][0])
+                    if event.remove_event(event_id) is True:
+                        e_tree.delete(selected_item[0])
+                        messagebox.showinfo("Success", f"Event ID {event_id} removed.")
+                    else:
+                        messagebox.showerror("Error", "Event ID not found.")
+                else:
+                    messagebox.showerror("Error", "Please select an event to remove.")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid Event ID.")
+
+    remove_b = Button(event_manager, text="Remove Event", width=20, command=remove_event)
+    remove_b.grid(row=7, column=2, padx=10, pady=10, sticky="w")
+
+    def remove_past():
+        event.remove_past_events()
+        messagebox.showinfo("Success", "All past events removed!")
+        refresh_treeview()
+
+    past_b = Button(event_manager, text="Remove Expired Events", width=20, command=remove_past)
+    past_b.grid(row=7, column=3, padx=10, pady=10, sticky="w")
+
 
 def Expense_manager():
     pass
