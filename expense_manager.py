@@ -3,13 +3,10 @@ class BudgetManager:
         self.budgets = {}
 
     def add_budget(self, name, amount, category, description):
-                                                                        #adds another dictionary into name(dict)
-        self.budgets[name] = {
-            'category': category,
-            'amount': amount,
-            'description' : description,
-            'approved': False
-        }
+                                                                        
+        self.budgets[name] = {'category': category,'amount': amount,
+            'description' : description,'approved': False}
+        
         print(f"Budget for {name} added successfully!")
 
     def view_budgets(self):
