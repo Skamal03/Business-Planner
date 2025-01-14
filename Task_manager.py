@@ -76,7 +76,7 @@ class TaskManager:
 
         while current:
             # checking current nodes deadline
-            if current.deadline < current_time:
+            if current.deadline<current_time:
                 if previous:
                     previous.next = current.next
                 else:
