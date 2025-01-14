@@ -77,7 +77,7 @@ class EmployeeDatabase:
 
 
 # command line
-def CLI():
+def command_line():
     database = EmployeeDatabase()
 
     while True:
@@ -140,4 +140,4 @@ def CLI():
 
 
 if __name__ == "__main__":
-    CLI()
+    command_line()
