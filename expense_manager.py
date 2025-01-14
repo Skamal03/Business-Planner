@@ -52,60 +52,9 @@ class BudgetManager:
         else:
             print(f"No budget found with name {name}.")
 
-class CLI:
-    def __init__(self):
-        self.manager = BudgetManager()
 
-    def display_menu(self):
-        print("\n=== Budget Manager CLI ===")
-        print("1. Add Budget")
-        print("2. View Budgets")
-        print("3. Approve Budget")
-        print("4. Disapprove Budget")
-        print("5. Exit")
-        print("==========================")
 
-    def run(self):
-        while True:
-            self.display_menu()
-            choice = input("Enter your choice: ").strip()
-
-            if choice == "1":
-                self.add_budget()
-            elif choice == "2":
-                self.manager.view_budgets()
-            elif choice == "3":
-                self.approve_budget()
-            elif choice == "4":
-                self.disapprove_budget()
-            elif choice == "5":
-                print("Exiting Budget Manager. Goodbye!")
-                break
-            else:
-                print("Invalid choice. Please try again.")
-
-    def add_budget(self):
-        name = input("Enter budget name: ").strip()
-        try:
-            amount = float(input("Enter budget amount (e.g., 5000): "))
-        except ValueError:
-            print("Invalid amount. Please enter a numeric value.")
-            return
-
-        category = input("Enter budget category (e.g., Marketing, HR): ").strip()
-        description = input("Enter a brief description: ").strip()
-        self.manager.add_budget(name, amount, category, description)
-
-    def approve_budget(self):
-        name = input("Enter the budget name to approve: ").strip()
-        self.manager.approve_budget(name)
-
-    def disapprove_budget(self):
-        name = input("Enter the budget name to disapprove: ").strip()
-        self.manager.disapprove_budget(name)
-
-# Command line interface
-def CLI():
+def command_line():
     budget_manager = BudgetManager()
 
     while True:
@@ -151,7 +100,7 @@ def CLI():
 
 
 if __name__ == "__main__":
-    CLI()
+    command_line()
 
 
 
