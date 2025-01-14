@@ -60,13 +60,9 @@ class TaskManager:
         current = self.head
         # adding info to the list
         while current:
-            tasks.append((
-                current.task_id,
-                current.description,
-                current.priority,
-                current.deadline.strftime("%Y-%m-%d %H:%M"),
-                current.priority,
-            ))
+            tasks.append((current.task_id,current.description,current.priority,
+                current.deadline.strftime("%Y-%m-%d %H:%M"),current.priority))
+
             current=current.next
         return tasks
     def remove_past_tasks(self):
@@ -88,7 +84,7 @@ class TaskManager:
 
 
 # Just for the command line interface
-def CLI():
+def command_line():
     task_manager = TaskManager()
 
     while True:
@@ -141,4 +137,4 @@ def CLI():
 
 
 if __name__ == "__main__":
-    CLI()
+    command_line()
