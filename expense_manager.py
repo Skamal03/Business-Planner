@@ -42,5 +42,3 @@ class BudgetManager:
             print(f"Budget for {name} has been marked as disapproved.")
         else:
             print(f"No budget found with name {name}.")
-            
-            
