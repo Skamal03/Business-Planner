@@ -13,7 +13,7 @@ employee = EmployeeDatabase()
 
 root = Tk()
 root.title("Business Planner")
-root.geometry("900x800")
+root.geometry("870x700")
 root.config(bg="white")
 
 def Home_page():
@@ -146,12 +146,12 @@ def Task_manager():
         task.add_task(desc, priority, deadline)
 
     add_b = Button(task_manager, text="Add Task", command=handling_task, width=20)
-    add_b.grid(row=6, column=0, padx=10, pady=20, sticky="w")
+    add_b.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
     tree_frame = Frame(task_manager)
-    tree_frame.grid(row=7, column=0, padx=10, pady=25, columnspan=20)
+    tree_frame.grid(row=7, column=0, padx=10, pady=10, columnspan=20)
 
-    t_tree = ttk.Treeview(tree_frame, height=20)
+    t_tree = ttk.Treeview(tree_frame, height=17)
     t_tree["columns"] = (["ID", "Description", "Priority", "Deadline"])
 
     t_tree.column("#0", width=0)
@@ -186,7 +186,7 @@ def Task_manager():
                 t_tree.insert("","end", values=i)
 
     view_b = Button(task_manager, text="View Task", width=20, command=adding_treeview)
-    view_b.grid(row=6, column=1, padx=10, pady=20, sticky="w")
+    view_b.grid(row=6, column=1, padx=10, pady=5, sticky="w")
 
     l4 = Label(task_manager, text="Enter/Select ID To Remove", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
     l4.grid(row=2, column=2, padx=10, pady=10, sticky="w")
@@ -226,7 +226,7 @@ def Task_manager():
             messagebox.showerror("Error", "Please enter a valid Task ID.")
 
     remove_b = Button(task_manager, text="Remove Task", width=20, command=remove_task)
-    remove_b.grid(row=6, column=2, padx=10, pady=20, sticky="w")
+    remove_b.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
     def remove_expired_tasks():
         task.remove_past_tasks()
@@ -234,7 +234,7 @@ def Task_manager():
         refresh_treeview()
 
     past_b = Button(task_manager, text="Remove Expired Tasks", width=20, command=remove_expired_tasks)
-    past_b.grid(row=6, column=3, padx=10, pady=20, sticky="w")
+    past_b.grid(row=6, column=3, padx=10, pady=5, sticky="w")
 
 def About():
     main_label = Label(about, text="About", font=("Bahnschrift SemiBold", 30, "bold"))
@@ -310,12 +310,12 @@ def Event_manager():
         event.add_event(time, desc)
 
     add_b = Button(event_manager, text="Add Event", command=handling_event, width=20)
-    add_b.grid(row=7, column=0, padx=10, pady=15, sticky="w")
+    add_b.grid(row=7, column=0, padx=10, pady=10, sticky="w")
 
-    tree_frame = Frame(event_manager, height=50)
-    tree_frame.grid(row=8, column=0, padx=10, pady=30, columnspan=10, sticky="w")
+    tree_frame = Frame(event_manager)
+    tree_frame.grid(row=8, column=0, padx=10, pady=10, columnspan=20)
 
-    e_tree = ttk.Treeview(tree_frame, height=20)
+    e_tree = ttk.Treeview(tree_frame, height=18)
     e_tree["columns"] = ["ID", "Description", "Date/time"]
 
     e_tree.column("#0", width=0)
@@ -349,7 +349,7 @@ def Event_manager():
                 e_tree.insert("", "end", values=x)
 
     view_b = Button(event_manager, text="View Events", width=20, command=adding_treeview)
-    view_b.grid(row=7, column=1, padx=10, pady=15, sticky="w")
+    view_b.grid(row=7, column=1, padx=10, pady=10, sticky="w")
 
     l3 = Label(event_manager, text="Enter/Select ID To Remove", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l3.grid(row=2, column=2, padx=10, pady=15, sticky="w")
@@ -428,7 +428,7 @@ def Expense_manager():
 
     options = ["Marketing","Operational Cost","Development Cost","Maintenance & Support","Legal Matters","Debts", "Capital expenditure"]
 
-    ex_category = ttk.Combobox(expense_manager, values=options)
+    ex_category = ttk.Combobox(expense_manager, values=options, width=17)
     ex_category.grid(row=4, column=1,padx=10, pady=10, sticky="w")
     ex_category.set("Marketing")
 
@@ -451,9 +451,9 @@ def Expense_manager():
     add_b.grid(row=2, column=2, padx=15, pady=10, sticky="w")
 
     tree_frame = Frame(expense_manager)
-    tree_frame.grid(row=7, column=0, padx=10, pady=30, columnspan=20, sticky="w")
+    tree_frame.grid(row=7, column=0, padx=10, pady=10, columnspan=20)
 
-    ex_tree = ttk.Treeview(tree_frame, height=20)
+    ex_tree = ttk.Treeview(tree_frame, height=17)
     ex_tree["columns"] = (["Name", "Amount", "Category", "Description", "Status"])
 
     ex_tree.column("#0", width=0)
@@ -461,7 +461,7 @@ def Expense_manager():
     ex_tree.column("Amount", width=100, anchor=W)
     ex_tree.column("Category", width=150, anchor=W)
     ex_tree.column("Description", width=175, anchor=W)
-    ex_tree.column("Status", width=150, anchor=W)
+    ex_tree.column("Status", width=115, anchor=W)
 
     ex_tree.heading("#0", text="")
     ex_tree.heading("Name", text="Name", anchor=W)
@@ -541,7 +541,7 @@ def Employeer_database():
     def add_employee():
         root = Tk()
         root.title("Add Employee")
-        root.geometry("700x450")
+        root.geometry("700x500")
         root.config(bg="white")
 
         # Add Employee Window Label
@@ -662,15 +662,48 @@ def Employeer_database():
     add_b = Button(employee_database, text="Add an Employee", width=20, command=add_employee)
     add_b.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
+    tree_frame = Frame(employee_database)
+    tree_frame.grid(row=7, column=0, padx=10, pady=10, columnspan=20)
+
+    ex_tree = ttk.Treeview(tree_frame, height=17)
+    ex_tree["columns"] = (["ID", "Name", "Department", "Salary", "Working Hours"])
+
+    ex_tree.column("#0", width=0)
+    ex_tree.column("ID", width=50, anchor=W)
+    ex_tree.column("Name", width=150, anchor=W)
+    ex_tree.column("Department", width=150, anchor=W)
+    ex_tree.column("Salary", width=125, anchor=W)
+    ex_tree.column("Working Hours", width=175, anchor=W)
+
+    ex_tree.heading("#0", text="")
+    ex_tree.heading("ID", text="ID", anchor=W)
+    ex_tree.heading("Name", text="Name", anchor=W)
+    ex_tree.heading("Department", text="Department", anchor=W)
+    ex_tree.heading("Salary", text="Salary", anchor=W)
+    ex_tree.heading("Working Hours", text="Working Hours", anchor=W)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Bahnschrift SemiBold", 12, 'bold'))
+
+    scrollbar = Scrollbar(tree_frame, command=ex_tree.yview)
+    ex_tree.config(yscrollcommand=scrollbar.set)
+
+    ex_tree.pack(side="left", expand=True, fill="both")
+    scrollbar.pack(side="right", expand=True, fill="both")
+
     display_b = Button(employee_database, text="Display all Employees", width=20)
     display_b.grid(row=3, column=0, padx=10, pady=10, sticky="w")
 
+    salary_label = Label(employee_database,text="Enter Search ID:" , font=("Bahnschrift", 12),bg="light green")
+    salary_label.grid(row=5, column=0, pady=10, sticky="w", padx=10)
+    salary_entry = Entry(employee_database, width=20)
+    salary_entry.grid(row=5, column=1, pady=10, padx=5)
+
     search_b = Button(employee_database, text="search Employee", width=20)
-    search_b.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+    search_b.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
     remove_b = Button(employee_database, text="Remove employee", width=20)
-    remove_b.grid(row=5, column=0, padx=10, pady=10, sticky="w")
-
+    remove_b.grid(row=3, column=1, padx=10, pady=10, sticky="w")
 
 
 def bar():
