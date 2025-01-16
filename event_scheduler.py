@@ -28,9 +28,15 @@ class EventScheduler:
     def view_events(self):
         if not self.event_scheduler:
             return []
+        sorted_events = self.sort_by_date()
+        formatted_events = []
 
-        sorted_events=self.sort_by_date()
-        return [(event_id, event['description'], event['date_time'].strftime('%Y-%m-%d %H:%M')) for event_id, event in sorted_events]
+        for event_id, event in sorted_events:
+            description = event['description']
+            formatted_date_time = event['date_time'].strftime('%Y-%m-%d %H:%M')
+            formatted_events.append((event_id, description, formatted_date_time))
+
+        return formatted_events
 
     def remove_event(self,event_id):
         if event_id in self.event_scheduler:
@@ -53,50 +59,3 @@ class EventScheduler:
             return True
         else:
             return False
-
-# Just for the command line interface
-def command_line():
-    scheduler = EventScheduler()
-
-    while True:
-        print("\nEvent Scheduler CLI")
-        print("1. Add Event")
-        print("2. View Events")
-        print("3. Remove Event")
-        print("4. Remove Past Events")
-        print("5. Exit")
-
-        choice = input("Enter your choice: ")
-
-        if choice == "1":
-            date_time = input("Enter event date and time (YYYY-MM-DD HH:MM): ")
-            description = input("Enter event description: ")
-            result = scheduler.add_event(date_time, description)
-            print(result)
-
-        elif choice == "2":
-            print("\nScheduled Events:")
-            print(scheduler.view_events())
-
-        elif choice == "3":
-            try:
-                event_id = int(input("Enter the event ID to remove: "))
-                result = scheduler.remove_event(event_id)
-                print(result)
-            except ValueError:
-                print("Invalid input. Please enter a valid event ID.")
-
-        elif choice == "4":
-            result = scheduler.remove_past_events()
-            print(result)
-
-        elif choice == "5":
-            print("Exiting Event Scheduler. Goodbye!")
-            break
-
-        else:
-            print("Invalid choice. Please try again.")
-
-
-if __name__ == "__main__":
-    command_line()
