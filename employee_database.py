@@ -1,95 +1,61 @@
-import random
+from datetime import datetime
+from tkinter import messagebox
 
-class Node:
-    def __init__(self, personal_info, contact_info, job_details):
-        self.personal_info = personal_info
-        self.contact_info = contact_info
-        self.job_details = job_details
-        self.next = None
-
-class EmployeeDatabase:
+class EventScheduler:
     def __init__(self):
-        self.head = None
-        self.employee_id_counter = 1  # Counter for generating unique employee IDs
+        self.event_scheduler = {}
+        self.event_id = 0
 
-    def generate_employee_id(self):
-        """Generate a unique employee ID."""
-        return f"EMP{str(self.employee_id_counter).zfill(3)}"
+    def add_event(self, date_time, description):
+        try:
+            # Parse the date_time string into a datetime object
+            date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+            self.event_scheduler[self.event_id] = {"description": description, "date_time": date_time}
+            messagebox.showinfo("Success", f"Event added: ID {self.event_id} - {date_time} - {description}")
+            self.event_id += 1  # Increment event_id for the next event
+        except ValueError:
+            messagebox.showerror("Error", "Field Empty or Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'.")
 
-    def add_employee(self, personal_info, contact_info, job_details):
-        """Add a new employee to the database."""
-        # Generate a unique employee ID
-        employee_id = self.generate_employee_id()
+    def sort_by_date(self):
+        event_list = list(self.event_scheduler.items())
+        n=len(event_list)
+        for i in range(n):
+            for j in range(0, n - i - 1):
+                if event_list[j][1]['date_time'] > event_list[j + 1][1]['date_time']:
+                    event_list[j], event_list[j + 1] = event_list[j + 1], event_list[j]
+        return event_list
 
-        # Add the ID to the personal information dictionary
-        personal_info['employee_id'] = employee_id
+    def view_events(self):
+        if not self.event_scheduler:
+            return []
+        sorted_events = self.sort_by_date()
+        formatted_events = []
 
-        # Create a new employee node
-        new_node = Node(personal_info, contact_info, job_details)
+        for event_id, event in sorted_events:
+            description = event['description']
+            formatted_date_time = event['date_time'].strftime('%Y-%m-%d %H:%M')
+            formatted_events.append((event_id, description, formatted_date_time))
 
-        # If the list is empty, this will be the first employee
-        if self.head is None:
-            self.head = new_node
+        return formatted_events
+
+    def remove_event(self,event_id):
+        if event_id in self.event_scheduler:
+            del self.event_scheduler[event_id]
+            return True
         else:
-            # Otherwise, traverse the list to find the last node and add the new employee
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
+            return False
 
-        # Increment the employee ID counter for the next employee
-        self.employee_id_counter += 1
 
-        print(f"Employee {personal_info['fullname']} added successfully with ID {employee_id}!")
+    def remove_past_events(self):
+        current_time=datetime.now()
+        events_removed = True
 
-    def display_employees(self):
-        """Display all employees in the database."""
-        if self.head is None:
-            print("No employees in the database.")
-            return
+        for event_id, event in list(self.event_scheduler.items()):
+            if event['date_time']<current_time:
+                del self.event_scheduler[event_id]
+                events_removed = True
 
-        current = self.head
-        while current:
-            print("Personal Information:")
-            for key, value in current.personal_info.items():
-                print(f"{key}: {value}")
-            print("Contact Information:")
-            for key, value in current.contact_info.items():
-                print(f"{key}: {value}")
-            print("Job Details:")
-            for key, value in current.job_details.items():
-                print(f"{key}: {value}")
-            print("-" * 50)
-            current = current.next
-
-    def search_employee(self, employee_id):
-        """Search for an employee by their ID."""
-        current = self.head
-
-        while current:
-            if current.personal_info['employee_id'] == employee_id:
-                print("Employee Found!")
-                print("Personal Information:", current.personal_info)
-                print("Contact Information:", current.contact_info)
-                print("Job Details:", current.job_details)
-                return
-            current = current.next
-        print(f"Employee with ID {employee_id} not found.")
-
-    def remove_employee(self, employee_id):
-        """Remove an employee from the database."""
-        current = self.head
-        prev = None
-
-        while current:
-            if current.personal_info['employee_id'] == employee_id:
-                if prev is None:
-                    self.head = current.next
-                else:
-                    prev.next = current.next
-                print(f"Employee with ID {employee_id} removed successfully.")
-                return
-            prev = current
-            current = current.next
-
-        print(f"Employee with ID {employee_id} not found.")
+        if events_removed is True:
+            return True
+        else:
+            return False
