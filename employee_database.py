@@ -1,61 +1,72 @@
-from datetime import datetime
-from tkinter import messagebox
+class Node:
+    def __init__(self, personal_info, contact_info, job_details):
+        self.personal_info = personal_info
+        self.contact_info = contact_info
+        self.job_details = job_details
+        self.next = None
 
-class EventScheduler:
+class EmployeeDatabase:
     def __init__(self):
-        self.event_scheduler = {}
-        self.event_id = 0
+        self.head = None
+        self.employee_id_counter = 1
 
-    def add_event(self, date_time, description):
-        try:
-            # Parse the date_time string into a datetime object
-            date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
-            self.event_scheduler[self.event_id] = {"description": description, "date_time": date_time}
-            messagebox.showinfo("Success", f"Event added: ID {self.event_id} - {date_time} - {description}")
-            self.event_id += 1  # Increment event_id for the next event
-        except ValueError:
-            messagebox.showerror("Error", "Field Empty or Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'.")
+    def generate_employee_id(self):
+        return f"EMP{str(self.employee_id_counter).zfill(3)}"
 
-    def sort_by_date(self):
-        event_list = list(self.event_scheduler.items())
-        n=len(event_list)
-        for i in range(n):
-            for j in range(0, n - i - 1):
-                if event_list[j][1]['date_time'] > event_list[j + 1][1]['date_time']:
-                    event_list[j], event_list[j + 1] = event_list[j + 1], event_list[j]
-        return event_list
+    def add_employee(self, personal_info, contact_info, job_details):
+        employee_id = self.generate_employee_id()
+        personal_info['employee_id'] = employee_id
+        new_node = Node(personal_info, contact_info, job_details)
+        if self.head is None:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+        self.employee_id_counter += 1
+        print(f"Employee {personal_info['fullname']} added successfully with ID {employee_id}!")
 
-    def view_events(self):
-        if not self.event_scheduler:
+    def display_employees(self):
+        if self.head is None:
+            print("No employees in the database.")
             return []
-        sorted_events = self.sort_by_date()
-        formatted_events = []
+        employees = []
+        current = self.head
+        while current:
+            employee_data = [current.personal_info.get("employee_id"),current.personal_info.get("fullname"),
+                            current.job_details.get("department"),current.job_details.get("salary"),
+                            current.job_details.get("hours_per_week"),]
+            employees.append(employee_data)
+            current = current.next
+        return employees
 
-        for event_id, event in sorted_events:
-            description = event['description']
-            formatted_date_time = event['date_time'].strftime('%Y-%m-%d %H:%M')
-            formatted_events.append((event_id, description, formatted_date_time))
+    def search_employee(self, employee_id):
+        current = self.head
+        while current:
+            if current.personal_info["employee_id"] == employee_id:
+                employee_data = {**current.personal_info,**current.contact_info,**current.job_details,}
+                return employee_data
+            current = current.next
+        return None
 
-        return formatted_events
-
-    def remove_event(self,event_id):
-        if event_id in self.event_scheduler:
-            del self.event_scheduler[event_id]
-            return True
-        else:
+    def remove_employee(self, employee_id):
+        current = self.head
+        prev = None
+        try:
+            while current:
+                if current.personal_info['employee_id'] == employee_id:
+                    if prev is None:
+                        self.head = current.next
+                    else:
+                        prev.next = current.next
+                    print(f"Employee with ID {employee_id} removed successfully.")
+                    return True
+                prev = current
+                current = current.next
+            print(f"Employee with ID {employee_id} not found.")
+            return False
+        except Exception as e:
+            print(f"Error occurred while removing employee: {e}")
             return False
 
-
-    def remove_past_events(self):
-        current_time=datetime.now()
-        events_removed = True
-
-        for event_id, event in list(self.event_scheduler.items()):
-            if event['date_time']<current_time:
-                del self.event_scheduler[event_id]
-                events_removed = True
-
-        if events_removed is True:
-            return True
-        else:
-            return False
