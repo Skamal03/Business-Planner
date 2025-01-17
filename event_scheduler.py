@@ -1,61 +1,164 @@
+import csv
 from datetime import datetime
 from tkinter import messagebox
 
-class EventScheduler:
-    def __init__(self):
-        self.event_scheduler = {}
-        self.event_id = 0
+class TaskNode:
+    def __init__(self, task_id, description, priority, deadline, status="pending"):
+        self.task_id = task_id
+        self.description = description
+        self.priority = priority
+        self.deadline = deadline
+        self.status = status
+        self.next = None
 
-    def add_event(self, date_time, description):
+class TaskManager:
+    def __init__(self, filename="tasks.csv"):
+        self.head = None
+        self.filename = filename
+        self.load_tasks()  # Load tasks from CSV when initializing
+
+    def load_tasks(self):
         try:
-            # Parse the date_time string into a datetime object
-            date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
-            self.event_scheduler[self.event_id] = {"description": description, "date_time": date_time}
-            messagebox.showinfo("Success", f"Event added: ID {self.event_id} - {date_time} - {description}")
-            self.event_id += 1  # Increment event_id for the next event
-        except ValueError:
-            messagebox.showerror("Error", "Field Empty or Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'.")
+            with open(self.filename, mode='r', newline='') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row:  # Skip empty rows
+                        task_id = int(row[0])
+                        description = row[1]
+                        priority = int(row[2])
+                        deadline = datetime.strptime(row[3], "%Y-%m-%d %H:%M")
+                        status = row[4]
+                        self.add_task_from_csv(task_id, description, priority, deadline, status)
+        except FileNotFoundError:
+            pass  # No tasks yet, nothing to load
 
-    def sort_by_date(self):
-        event_list = list(self.event_scheduler.items())
-        n=len(event_list)
-        for i in range(n):
-            for j in range(0, n - i - 1):
-                if event_list[j][1]['date_time'] > event_list[j + 1][1]['date_time']:
-                    event_list[j], event_list[j + 1] = event_list[j + 1], event_list[j]
-        return event_list
+    def save_tasks(self):
+        try:
+            with open(self.filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                current = self.head
+                while current:
+                    writer.writerow([current.task_id, current.description, current.priority, current.deadline.strftime("%Y-%m-%d %H:%M"), current.status])
+                    current = current.next
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not save tasks to CSV: {e}")
 
-    def view_events(self):
-        if not self.event_scheduler:
-            return []
-        sorted_events = self.sort_by_date()
-        formatted_events = []
+    def add_task(self, description, priority, deadline):
+        try:
+            task_id = self.generate_task_id()
+            deadline = datetime.strptime(deadline, "%Y-%m-%d %H:%M")
+            new_task = TaskNode(task_id, description, priority, deadline)
 
-        for event_id, event in sorted_events:
-            description = event['description']
-            formatted_date_time = event['date_time'].strftime('%Y-%m-%d %H:%M')
-            formatted_events.append((event_id, description, formatted_date_time))
+            # Traverse and sort tasks by priority
+            if not self.head or priority < self.head.priority:
+                new_task.next = self.head
+                self.head = new_task
+            else:
+                current = self.head
+                while current.next and current.next.priority <= priority:
+                    current = current.next
+                new_task.next = current.next
+                current.next = new_task
 
-        return formatted_events
+            self.save_tasks()  # Save tasks after adding
+            messagebox.showinfo("Success", "Task added successfully")
+            return task_id
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not add task: {e}")
 
-    def remove_event(self,event_id):
-        if event_id in self.event_scheduler:
-            del self.event_scheduler[event_id]
-            return True
+    def add_task_from_csv(self, task_id, description, priority, deadline, status):
+        # This method is used to create a task from CSV data
+        new_task = TaskNode(task_id, description, priority, deadline, status)
+
+        if not self.head or priority < self.head.priority:
+            new_task.next = self.head
+            self.head = new_task
         else:
+            current = self.head
+            while current.next and current.next.priority <= priority:
+                current = current.next
+            new_task.next = current.next
+            current.next = new_task
+
+    def generate_task_id(self):
+        # Generate a unique task ID based on current tasks in CSV file
+        if not self.head:
+            return 1  # First task
+        return self.head.task_id + 1  # Task ID is auto-generated based on linked list
+
+    def remove_task(self, task_id):
+        if not self.head:
             return False
 
-
-    def remove_past_events(self):
-        current_time=datetime.now()
-        events_removed = True
-
-        for event_id, event in list(self.event_scheduler.items()):
-            if event['date_time']<current_time:
-                del self.event_scheduler[event_id]
-                events_removed = True
-
-        if events_removed is True:
+        if self.head.task_id == task_id:
+            self.head = self.head.next
+            self.save_tasks()  # Save after removal
             return True
-        else:
-            return False
+
+        current = self.head
+        while current.next and current.next.task_id != task_id:
+            current = current.next
+
+        if current.next and current.next.task_id == task_id:
+            current.next = current.next.next
+            self.save_tasks()  # Save after removal
+            return True
+
+        return False
+
+    def view_tasks(self):
+        tasks = []
+        current = self.head
+        while current:
+            tasks.append((
+                current.task_id,
+                current.description,
+                current.priority,
+                current.deadline.strftime("%Y-%m-%d %H:%M"),
+                current.status
+            ))
+            current = current.next
+        return tasks
+
+    def remove_past_tasks(self):
+        current = self.head
+        previous = None
+        current_time = datetime.now()
+
+        while current:
+            # Checking current node's deadline
+            if current.deadline < current_time:
+                if previous:
+                    previous.next = current.next
+                else:
+                    self.head = current.next
+                current = current.next
+            else:
+                previous = current
+                current = current.next
+
+        self.save_tasks()  # Save after removing expired tasks
+
+    def mark_task_as_done(self, task_id):
+        current = self.head
+        while current:
+            if current.task_id == task_id:
+                current.status = "done"
+                self.save_tasks()  # Save after marking as done
+                messagebox.showinfo("Success", f"Task {task_id} marked as done")
+                return True
+            current = current.next
+        messagebox.showerror("Error", f"Task {task_id} not found")
+        return False
+
+    def mark_task_as_pending(self, task_id):
+        current = self.head
+        while current:
+            if current.task_id == task_id:
+                current.status = "pending"  # Update status to "pending"
+                self.save_tasks()  # Save after marking as pending
+                messagebox.showinfo("Success", f"Task {task_id} marked as pending")
+                return True
+            current = current.next
+        messagebox.showerror("Error", f"Task {task_id} not found")
+        return False
