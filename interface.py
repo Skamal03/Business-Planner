@@ -105,11 +105,11 @@ def Tabs():
 
 def Task_manager():
     main_label = Label(task_manager, text="Task Manager", font=("Bahnschrift SemiBold", 30, "bold"))
-    main_label.grid(row=0, pady=7, columnspan=4, sticky="ns")
+    main_label.grid(row=0, pady=7, columnspan=5, sticky="ns")
     main_label.config(fg="white", bg="light blue")
 
     separator = ttk.Separator(task_manager, orient="horizontal")
-    separator.grid(row=1, column=0, columnspan=4, sticky="ew", pady=7)
+    separator.grid(row=1, column=0, columnspan=5, sticky="ew", pady=7)
 
     l1 = Label(task_manager, text="Description", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
     l1.grid(row=2, column=0, padx=10, pady=10, sticky="w")
@@ -148,22 +148,29 @@ def Task_manager():
     tree_frame.grid(row=7, column=0, padx=10, pady=10, columnspan=20)
 
     t_tree = ttk.Treeview(tree_frame, height=17)
-    t_tree["columns"] = (["ID", "Description", "Priority", "Deadline"])
+    t_tree["columns"] = (["ID", "Description", "Priority", "Deadline", "Status"])
 
     t_tree.column("#0", width=0)
     t_tree.column("ID", width=50, anchor=W)
     t_tree.column("Description", width=200, anchor=W)
-    t_tree.column("Priority", width=200, anchor=W)
-    t_tree.column("Deadline", width=200, anchor=W)
+    t_tree.column("Priority", width=100, anchor=W)
+    t_tree.column("Deadline", width=150, anchor=W)
+    t_tree.column("Status", width=150, anchor=W)
 
     t_tree.heading("#0", text="")
     t_tree.heading("ID", text="ID", anchor=W)
     t_tree.heading("Description", text="Description", anchor=W)
     t_tree.heading("Priority", text="Priority", anchor=W)
     t_tree.heading("Deadline", text="Deadline", anchor=W)
+    t_tree.heading("Status", text="Status", anchor=W)
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Bahnschrift SemiBold", 12, 'bold'))
+    style.map("Treeview", background=[("selected", "#bce6ff")])  # Highlight selected rows
+
+    # Define tags for coloring
+    t_tree.tag_configure("pending", background="yellow")
+    t_tree.tag_configure("done", background="lightgreen")
 
     scrollbar = Scrollbar(tree_frame, command=t_tree.yview)
     t_tree.config(yscrollcommand=scrollbar.set)
@@ -179,17 +186,12 @@ def Task_manager():
             messagebox.showinfo("Empty", "No Tasks Added Yet")
         else:
             for i in tasks:
-                t_tree.insert("", "end", values=i)
+                status = "pending"  # Default status for new tasks
+                tag = "pending" if status == "pending" else "done"
+                t_tree.insert("", "end", values=i, tags=(tag,))
 
     view_b = Button(task_manager, text="View Task", width=20, command=adding_treeview)
     view_b.grid(row=6, column=1, padx=10, pady=5, sticky="w")
-
-    l4 = Label(task_manager, text="Enter/Select ID To Remove", bg="light blue",
-               font=("Bahnschrift SemiBold", 10, "bold"))
-    l4.grid(row=2, column=2, padx=10, pady=10, sticky="w")
-
-    t_remove = Entry(task_manager)
-    t_remove.grid(row=2, column=3, padx=10, pady=10, sticky="w")
 
     def refresh_treeview():
         for row in t_tree.get_children():
@@ -197,6 +199,13 @@ def Task_manager():
         tasks = task.view_tasks()
         for i in tasks:
             t_tree.insert("", "end", values=i)
+
+    l4 = Label(task_manager, text="Enter/Select ID To Remove", bg="light blue",
+               font=("Bahnschrift SemiBold", 10, "bold"))
+    l4.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+
+    t_remove = Entry(task_manager, width=25)
+    t_remove.grid(row=2, column=3, padx=10, pady=10, sticky="w")
 
     def remove_task():
         try:
@@ -214,16 +223,31 @@ def Task_manager():
                     task_id = int(t_tree.item(selected_item[0])['values'][0])
                     if task.remove_task(task_id) is True:
                         t_tree.delete(selected_item[0])
-                        messagebox.showinfo("Success", f"Event ID {task_id} removed.")
+                        messagebox.showinfo("Success", f"Task ID {task_id} removed.")
                     else:
-                        messagebox.showerror("Error", "Event ID not found.")
+                        messagebox.showerror("Error", "Task ID not found.")
                 else:
-                    messagebox.showerror("Error", "Please select an event to remove.")
+                    messagebox.showerror("Error", "Please select a task to remove.")
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid Task ID.")
 
     remove_b = Button(task_manager, text="Remove Task", width=20, command=remove_task)
     remove_b.grid(row=6, column=2, padx=10, pady=5, sticky="w")
+
+    def mark_task_done():
+        try:
+            selected_item = t_tree.selection()
+            if selected_item:
+                task_id = int(t_tree.item(selected_item[0])['values'][0])
+                task.mark_task_as_done(task_id)
+                refresh_treeview()
+            else:
+                messagebox.showerror("Error", "Please select a task to mark as done.")
+        except ValueError:
+            messagebox.showerror("Error", "Invalid Task ID.")
+
+    done_b = Button(task_manager, text="Mark as Done", width=20, command=mark_task_done)
+    done_b.grid(row=4, column=3, padx=10, pady=10, sticky="w")
 
     def remove_expired_tasks():
         task.remove_past_tasks()
@@ -232,6 +256,7 @@ def Task_manager():
 
     past_b = Button(task_manager, text="Remove Expired Tasks", width=20, command=remove_expired_tasks)
     past_b.grid(row=6, column=3, padx=10, pady=5, sticky="w")
+
 
 def About():
     main_label = Label(about, text="About", font=("Bahnschrift SemiBold", 30, "bold"))
@@ -716,7 +741,7 @@ def Employeer_database():
     def employee_form(employee_data):
         root = Tk()
         root.title("Employee Details")
-        root.geometry("550x600")
+        root.geometry("600x600")
         root.config(bg="white")
 
         main_label = Label(root, text="Employee Details", font=("Bahnschrift SemiBold", 30, "bold"))
