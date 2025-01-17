@@ -1,72 +1,67 @@
-class Node:
-    def __init__(self, personal_info, contact_info, job_details):
-        self.personal_info = personal_info
-        self.contact_info = contact_info
-        self.job_details = job_details
-        self.next = None
+import csv
 
-class EmployeeDatabase:
-    def __init__(self):
-        self.head = None
-        self.employee_id_counter = 1
+class BudgetManager:
+    def __init__(self, filename="budgets.csv"):
+        self.filename = filename
+        self.budgets = {}
+        self.load_budgets()  # Load budgets from CSV when initializing
 
-    def generate_employee_id(self):
-        return f"EMP{str(self.employee_id_counter).zfill(3)}"
-
-    def add_employee(self, personal_info, contact_info, job_details):
-        employee_id = self.generate_employee_id()
-        personal_info['employee_id'] = employee_id
-        new_node = Node(personal_info, contact_info, job_details)
-        if self.head is None:
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
-        self.employee_id_counter += 1
-        print(f"Employee {personal_info['fullname']} added successfully with ID {employee_id}!")
-
-    def display_employees(self):
-        if self.head is None:
-            print("No employees in the database.")
-            return []
-        employees = []
-        current = self.head
-        while current:
-            employee_data = [current.personal_info.get("employee_id"),current.personal_info.get("fullname"),
-                            current.job_details.get("department"),current.job_details.get("salary"),
-                            current.job_details.get("hours_per_week"),]
-            employees.append(employee_data)
-            current = current.next
-        return employees
-
-    def search_employee(self, employee_id):
-        current = self.head
-        while current:
-            if current.personal_info["employee_id"] == employee_id:
-                employee_data = {**current.personal_info,**current.contact_info,**current.job_details,}
-                return employee_data
-            current = current.next
-        return None
-
-    def remove_employee(self, employee_id):
-        current = self.head
-        prev = None
+    def load_budgets(self):
         try:
-            while current:
-                if current.personal_info['employee_id'] == employee_id:
-                    if prev is None:
-                        self.head = current.next
-                    else:
-                        prev.next = current.next
-                    print(f"Employee with ID {employee_id} removed successfully.")
-                    return True
-                prev = current
-                current = current.next
-            print(f"Employee with ID {employee_id} not found.")
-            return False
+            with open(self.filename, mode='r', newline='') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row:
+                        name = row[0]
+                        amount = float(row[1])
+                        category = row[2]
+                        description = row[3]
+                        status = row[4]
+                        self.budgets[name] = {"category": category, "amount": amount,
+                                              "description": description, "status": status}
+        except FileNotFoundError:
+            pass  # No budgets yet, nothing to load
+
+    def save_budgets(self):
+        try:
+            with open(self.filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                for name, details in self.budgets.items():
+                    writer.writerow([name, details["amount"], details["category"], details["description"], details["status"]])
         except Exception as e:
-            print(f"Error occurred while removing employee: {e}")
+            print(f"Error saving budgets: {e}")
+
+    def add_budget(self, name, amount, category, description):
+        self.budgets[name] = {"category": category, "amount": amount,
+                              "description": description, "status": "Pending"}
+        self.save_budgets()  # Save budgets after adding
+        print(f"Budget for {name} added successfully!")
+
+    def view_budgets(self):
+        if not self.budgets:
+            print("No budgets available.")
             return False
 
+        budget_list = []
+        for name, details in self.budgets.items():
+            status = details["status"]
+            budget_details = (name, details['amount'], details['category'], details['description'], status)
+            budget_list.append(budget_details)
+
+        return budget_list
+
+    def approve_budget(self, name):
+        if name in self.budgets:
+            self.budgets[name]["status"] = "Approved"
+            self.save_budgets()  # Save budgets after approval
+            print(f"Budget for {name} approved.")
+        else:
+            print(f"No budget found with name {name}.")
+
+    def disapprove_budget(self, name):
+        if name in self.budgets:
+            self.budgets[name]["status"] = "Disapproved"
+            self.save_budgets()  # Save budgets after disapproval
+            print(f"Budget for {name} has been marked as disapproved.")
+        else:
+            print(f"No budget found with name {name}.")
