@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from PIL import Image, ImageTk
 from tkinter import messagebox
 from Task_manager import TaskManager
 from event_scheduler import EventScheduler
@@ -28,6 +29,7 @@ def HomePageContent():
     home_frame = Frame(root, bg="steel blue")
     home_frame.pack(fill="both", expand=True, padx=10, pady=3)
 
+
     separator = ttk.Separator(home_frame, orient="horizontal")
     separator.pack(fill="x", pady=15, side="top", expand=True)
 
@@ -47,8 +49,7 @@ def HomePageContent():
 
 def menu():
     global menu_button
-    menu_button = Button(root, text="OPEN", command=Tabs, width=40, height=1, bg="steel blue", fg="white",
-                         font=("Bahnschrift SemiBold", 10, "bold"))
+    menu_button = Button(root, text="OPEN", command=Tabs, width=40, height=1, bg="grey", fg="white",font=("Bahnschrift SemiBold", 10, "bold"))
     menu_button.pack(side="top", anchor="s", padx=5, pady=10)
 
 def Tabs():
@@ -74,10 +75,10 @@ def Tabs():
     notebook.configure(style="Top.TNotebook")
 
     about = Frame(notebook, bg="steel blue", padx=10)
-    task_manager = Frame(notebook, bg="light blue", padx=10)
+    task_manager = Frame(notebook, bg="light grey", padx=10)
     event_manager = Frame(notebook, bg="light grey", padx=10)
-    expense_manager = Frame(notebook, bg="light green", padx=10)
-    employee_database = Frame(notebook, bg="light green", padx=10)
+    expense_manager = Frame(notebook, bg="light grey", padx=10)
+    employee_database = Frame(notebook, bg="light grey", padx=10)
 
     def back():
         notebook_frame.destroy()
@@ -85,7 +86,7 @@ def Tabs():
         HomePageContent()
         menu()
 
-    home_b = Button(notebook, text="Home", width=15, command=back, bg="steel blue", fg="white")
+    home_b = Button(notebook, text="Home", width=15, command=back, bg="grey", fg="white")
     home_b.pack(side="bottom", anchor="w", padx=5, pady=5)
 
     notebook.add(about, text="About")
@@ -106,24 +107,24 @@ def Tabs():
 def Task_manager():
     main_label = Label(task_manager, text="Task Manager", font=("Bahnschrift SemiBold", 30, "bold"))
     main_label.grid(row=0, pady=7, columnspan=5, sticky="ns")
-    main_label.config(fg="white", bg="light blue")
+    main_label.config(fg="white", bg="light grey")
 
     separator = ttk.Separator(task_manager, orient="horizontal")
     separator.grid(row=1, column=0, columnspan=5, sticky="ew", pady=7)
 
-    l1 = Label(task_manager, text="Description", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
+    l1 = Label(task_manager, text="Description", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l1.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
-    l2 = Label(task_manager, text="Priority", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
+    l2 = Label(task_manager, text="Priority", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l2.grid(row=3, column=0, padx=10, pady=10, sticky="w")
 
-    l3 = Label(task_manager, text="Date/Time", bg="light blue", font=("Bahnschrift SemiBold", 10, "bold"))
+    l3 = Label(task_manager, text="Date/Time", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l3.grid(row=4, column=0, padx=10, pady=10, sticky="w")
 
-    l5 = Label(task_manager, text="(1-High, 2-Medium, 3-Low)", bg="light blue", font=("Bahnschrift", 10))
+    l5 = Label(task_manager, text="(1-High, 2-Medium, 3-Low)", bg="light grey", font=("Bahnschrift", 10))
     l5.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    l6 = Label(task_manager, text="(YYYY-MM-DD HH:MM)", bg="light blue", font=("Bahnschrift", 10))
+    l6 = Label(task_manager, text="(YYYY-MM-DD HH:MM)", bg="light grey", font=("Bahnschrift", 10))
     l6.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
     t_description = Entry(task_manager)
@@ -141,7 +142,7 @@ def Task_manager():
         deadline = t_deadline.get()
         task.add_task(desc, priority, deadline)
 
-    add_b = Button(task_manager, text="Add Task", command=handling_task, width=20)
+    add_b = Button(task_manager, text="Add Task", command=handling_task, width=20, bg="light blue", height=2)
     add_b.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
     tree_frame = Frame(task_manager)
@@ -166,7 +167,7 @@ def Task_manager():
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Bahnschrift SemiBold", 12, 'bold'))
-    style.map("Treeview", background=[("selected", "#bce6ff")])  # Highlight selected rows
+    style.map("Treeview", background=[("selected", "#bce6ff")])
 
     # Define tags for coloring
     t_tree.tag_configure("pending", background="yellow")
@@ -186,11 +187,11 @@ def Task_manager():
             messagebox.showinfo("Empty", "No Tasks Added Yet")
         else:
             for i in tasks:
-                status = "pending"  # Default status for new tasks
+                status = "pending"
                 tag = "pending" if status == "pending" else "done"
                 t_tree.insert("", "end", values=i, tags=(tag,))
 
-    view_b = Button(task_manager, text="View Task", width=20, command=adding_treeview)
+    view_b = Button(task_manager, text="View Task", width=20, command=adding_treeview, bg="light blue", height=2)
     view_b.grid(row=6, column=1, padx=10, pady=5, sticky="w")
 
     def refresh_treeview():
@@ -200,7 +201,7 @@ def Task_manager():
         for i in tasks:
             t_tree.insert("", "end", values=i)
 
-    l4 = Label(task_manager, text="Enter/Select ID To Remove", bg="light blue",
+    l4 = Label(task_manager, text="Enter/Select ID To Remove", bg="light grey",
                font=("Bahnschrift SemiBold", 10, "bold"))
     l4.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
@@ -231,7 +232,7 @@ def Task_manager():
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid Task ID.")
 
-    remove_b = Button(task_manager, text="Remove Task", width=20, command=remove_task)
+    remove_b = Button(task_manager, text="Remove Task", width=20, command=remove_task, bg="light blue", height=2)
     remove_b.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
     def mark_task_done():
@@ -246,7 +247,7 @@ def Task_manager():
         except ValueError:
             messagebox.showerror("Error", "Invalid Task ID.")
 
-    done_b = Button(task_manager, text="Mark as Done", width=20, command=mark_task_done)
+    done_b = Button(task_manager, text="Mark as Done", width=20, command=mark_task_done, bg="light blue", height=2)
     done_b.grid(row=4, column=3, padx=10, pady=10, sticky="w")
 
     def remove_expired_tasks():
@@ -254,58 +255,57 @@ def Task_manager():
         messagebox.showinfo("Success", "All expired tasks removed!")
         refresh_treeview()
 
-    past_b = Button(task_manager, text="Remove Expired Tasks", width=20, command=remove_expired_tasks)
+    past_b = Button(task_manager, text="Remove Expired Tasks", width=20, command=remove_expired_tasks, bg="light blue", height=2)
     past_b.grid(row=6, column=3, padx=10, pady=5, sticky="w")
 
 
 def About():
     main_label = Label(about, text="About", font=("Bahnschrift SemiBold", 30, "bold"))
-    main_label.grid(row=0, column=3, pady=7, sticky="n")
+    main_label.grid(row=0, column=1, pady=7, sticky="n")
     main_label.config(fg="white", bg="steel blue")
 
     separator = ttk.Separator(about, orient="horizontal")
-    separator.grid(row=1, column=3, columnspan=1, sticky="we", pady=0)
+    separator.grid(row=1, column=0, columnspan=10, sticky="we", pady=10, padx=10)
 
     ownership = Label(about, text="Ownership", bg="steel blue", font=("Bahnschrift SemiBold", 20, "bold"), fg="white")
-    ownership.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+    ownership.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
-    Devloped = Label(about, text="Developed by:", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"),
-                     fg="white")
-    Devloped.grid(row=3, column=2, padx=10, pady=10, sticky="w")
+    Devloped = Label(about, text="Developed by:", bg="steel blue", font=("Bahnschrift SemiBold", 15),fg="white")
+    Devloped.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
-    names = Label(about, text="H&S", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
-    names.grid(row=3, column=3, padx=10, pady=10, sticky="w")
+    names = Label(about, text="H&S", bg="steel blue", font=("Bahnschrift", 12), fg="white")
+    names.grid(row=3, column=1, pady=5, sticky="w")
 
     id = Label(about, text="ID:", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"), fg="white")
-    id.grid(row=4, column=2, padx=10, pady=10, sticky="w")
+    id.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
-    sap = Label(about, text="56754 & 56804", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
-    sap.grid(row=4, column=3, padx=10, pady=10, sticky="w")
+    sap = Label(about, text="56754 & 56804", bg="steel blue", font=("Bahnschrift", 12), fg="white")
+    sap.grid(row=4, column=1, pady=5, sticky="w")
 
     department = Label(about, text="Department", bg="steel blue", font=("Bahnschrift SemiBold", 15, "bold"), fg="white")
-    department.grid(row=5, column=2, padx=10, pady=10, sticky="w")
+    department.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
-    bscy = Label(about, text="BSCY-3", bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white")
-    bscy.grid(row=5, column=3, padx=10, pady=10, sticky="w")
+    bscy = Label(about, text="BSCY-3", bg="steel blue", font=("Bahnschrift", 12), fg="white")
+    bscy.grid(row=5, column=1, pady=5, sticky="w")
 
     rights = Label(about, text="© 2025 All Rights Reserved.", bg="steel blue", font=("Bahnschrift SemiBold", 12),
                    fg="white")
-    rights.grid(row=6, column=2, padx=10, pady=10, sticky="w")
+    rights.grid(row=6, column=0, padx=5, pady=15, sticky="w")
 
     separator = ttk.Separator(about, orient="horizontal")
-    separator.grid(row=7, column=0, columnspan=10, sticky="ew", pady=10)
+    separator.grid(row=7, column=0, columnspan=10, sticky="we", pady=20, padx=10)
 
     project = Label(about, text="About this Project", bg="steel blue", font=("Bahnschrift SemiBold", 20), fg="white")
-    project.grid(row=9, column=2, padx=10, pady=10, sticky="s")
+    project.grid(row=9, column=0, padx=10, pady=10, sticky="w")
 
     p_details = (
-        "This project is a comprehensive business planner designed to simplify task management, event scheduling, expense tracking, and employee database "
-        "It provides an intuitive interface and efficient tools to enhance productivity and streamline business operations. This app showcases my growing "
-        "skills in Python, GUI development (Tkinter), and practical problem-solving.")
+        "• This project is a comprehensive business planner designed to simplify task management, event scheduling, expense tracking, and employee database.\n\n"
+        "• It provides an intuitive interface and efficient tools to enhance productivity and streamline business operations.\n\n"
+        "• This app showcases my growing skills in Python, GUI development (Tkinter), and practical problem-solving.")
 
     details = Label(about, text=p_details, bg="steel blue", font=("Bahnschrift SemiBold", 12), fg="white",
-                    justify="left", wraplength=500)
-    details.grid(row=10, column=2, columnspan=10, padx=10, pady=0, sticky="s")
+                    justify="left", wraplength=700)
+    details.grid(row=10, column=0, columnspan=10, padx=10, pady=0, sticky="n")
 
 def Event_manager():
     main_label = Label(event_manager, text="Event Schedular", font=("Bahnschrift SemiBold", 30, "bold"))
@@ -335,7 +335,7 @@ def Event_manager():
         time = e_time.get()
         event.add_event(time, desc)
 
-    add_b = Button(event_manager, text="Add Event", command=handling_event, width=20)
+    add_b = Button(event_manager, text="Add Event", command=handling_event, width=20, bg="light blue", height=2)
     add_b.grid(row=7, column=0, padx=10, pady=10, sticky="w")
 
     tree_frame = Frame(event_manager)
@@ -374,7 +374,7 @@ def Event_manager():
             for x in events:
                 e_tree.insert("", "end", values=x)
 
-    view_b = Button(event_manager, text="View Events", width=20, command=adding_treeview)
+    view_b = Button(event_manager, text="View Events", width=20, command=adding_treeview, bg="light blue", height=2)
     view_b.grid(row=7, column=1, padx=10, pady=10, sticky="w")
 
     l3 = Label(event_manager, text="Enter/Select ID To Remove", bg="light grey",
@@ -415,7 +415,7 @@ def Event_manager():
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid Event ID.")
 
-    remove_b = Button(event_manager, text="Remove Event", width=20, command=remove_event)
+    remove_b = Button(event_manager, text="Remove Event", width=20, command=remove_event, bg="light blue", height=2)
     remove_b.grid(row=7, column=2, padx=10, pady=10, sticky="w")
 
     def remove_past():
@@ -423,27 +423,27 @@ def Event_manager():
         messagebox.showinfo("Success", "All past events removed!")
         refresh_treeview()
 
-    past_b = Button(event_manager, text="Remove Expired Events", width=20, command=remove_past)
+    past_b = Button(event_manager, text="Remove Expired Events", width=20, command=remove_past, bg="light blue", height=2)
     past_b.grid(row=7, column=3, padx=10, pady=10, sticky="w")
 
 def Expense_manager():
     main_label = Label(expense_manager, text="Event Manager", font=("Bahnschrift SemiBold", 30, "bold"))
     main_label.grid(row=0, column=0, columnspan=10, pady=7, sticky="ns")
-    main_label.config(fg="white", bg="light green")
+    main_label.config(fg="white", bg="light grey")
 
     separator = ttk.Separator(expense_manager, orient="horizontal")
     separator.grid(row=1, column=0, columnspan=10, sticky="ew", pady=7)
 
-    l1 = Label(expense_manager, text="Name:", bg="light green", font=("Bahnschrift SemiBold", 10, "bold"))
+    l1 = Label(expense_manager, text="Name:", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l1.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
-    l2 = Label(expense_manager, text="Amount:", bg="light green", font=("Bahnschrift SemiBold", 10, "bold"))
+    l2 = Label(expense_manager, text="Amount:", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l2.grid(row=3, column=0, padx=10, pady=10, sticky="w")
 
-    l3 = Label(expense_manager, text="Category:", bg="light green", font=("Bahnschrift SemiBold", 10, "bold"))
+    l3 = Label(expense_manager, text="Category:", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l3.grid(row=4, column=0, padx=10, pady=10, sticky="w")
 
-    l5 = Label(expense_manager, text="Description:", bg="light green", font=("Bahnschrift SemiBold", 10, "bold"))
+    l5 = Label(expense_manager, text="Description:", bg="light grey", font=("Bahnschrift SemiBold", 10, "bold"))
     l5.grid(row=5, column=0, padx=10, pady=10, sticky="w")
 
     ex_name = Entry(expense_manager)
@@ -473,7 +473,7 @@ def Expense_manager():
         except:
             messagebox.showerror("Error", "Could not Add expense")
 
-    add_b = Button(expense_manager, text="Add Budget", width=25, command=handling_expenses)
+    add_b = Button(expense_manager, text="Add Budget", width=25, command=handling_expenses, bg="light blue", height=2)
     add_b.grid(row=2, column=2, padx=15, pady=10, sticky="w")
 
     tree_frame = Frame(expense_manager)
@@ -522,10 +522,10 @@ def Expense_manager():
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
-    view_b = Button(expense_manager, text="View Budgets", width=25, command=adding_treeview)
+    view_b = Button(expense_manager, text="View Budgets", width=25, command=adding_treeview, bg="light blue", height=2)
     view_b.grid(row=3, column=2, padx=15, pady=10, sticky="w")
 
-    l5 = Label(expense_manager, text="NAME (Approval/Disapproval)", bg="light green",
+    l5 = Label(expense_manager, text="NAME (Approval/Disapproval)", bg="light grey",
                font=("Bahnschrift SemiBold", 10, "bold"))
     l5.grid(row=5, column=2, padx=15, pady=10, sticky="w")
 
@@ -540,7 +540,7 @@ def Expense_manager():
         else:
             messagebox.showwarning("Input Error", "Please enter a valid budget name.")
 
-    app_b = Button(expense_manager, text="Approve Budget", width=25, command=handle_approval)
+    app_b = Button(expense_manager, text="Approve Budget", width=25, command=handle_approval, bg="light blue", height=2)
     app_b.grid(row=2, column=3, padx=15, pady=10, sticky="w")
 
     def handle_disapproval():
@@ -552,13 +552,13 @@ def Expense_manager():
         else:
             messagebox.showwarning("Input Error", "Please enter a valid budget name.")
 
-    dis_b = Button(expense_manager, text="Disapprove Budget", width=25, command=handle_disapproval)
+    dis_b = Button(expense_manager, text="Disapprove Budget", width=25, command=handle_disapproval, bg="light blue", height=2)
     dis_b.grid(row=3, column=3, padx=15, pady=10, sticky="w")
 
 def Employeer_database():
     main_label = Label(employee_database, text="Employee Database", font=("Bahnschrift SemiBold", 30, "bold"))
     main_label.grid(row=0, column=0, columnspan=10, pady=7, sticky="ns")
-    main_label.config(fg="white", bg="light green")
+    main_label.config(fg="white", bg="light grey")
 
     separator = ttk.Separator(employee_database, orient="horizontal")
     separator.grid(row=1, column=0, columnspan=10, sticky="ew", pady=7)
@@ -689,7 +689,7 @@ def Employeer_database():
 
         root.mainloop()
 
-    add_b = Button(employee_database, text="Add an Employee", width=20, command=add_employee, height=2)
+    add_b = Button(employee_database, text="Add an Employee", width=20, command=add_employee, bg="light blue", height=2)
     add_b.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
     tree_frame = Frame(employee_database)
@@ -735,7 +735,7 @@ def Employeer_database():
             ex_tree.insert("", "end", values=emp)
 
 
-    display_b = Button(employee_database, text="Display all Employees", width=20, command=adding_in_treeview, height=2)
+    display_b = Button(employee_database, text="Display all Employees", width=20, command=adding_in_treeview, bg="light blue", height=2)
     display_b.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
     def employee_form(employee_data):
@@ -819,15 +819,15 @@ def Employeer_database():
         else:
             messagebox.showinfo("Employee Not Found", f"No employee found with ID {employee_id}")
 
-    salary_label = Label(employee_database, text="Enter Search ID:", font=("Bahnschrift", 10), bg="light green")
+    salary_label = Label(employee_database, text="Enter Search ID:", font=("Bahnschrift", 10), bg="light grey")
     salary_label.grid(row=2, column=1, pady=10, sticky="w", padx=10)
     salary_entry = Entry(employee_database, width=25)
     salary_entry.grid(row=2, column=2, pady=10, padx=5, sticky="w")
 
-    search_b = Button(employee_database, text="search Employee", width=20, command=show_employee)
+    search_b = Button(employee_database, text="search Employee", width=20, command=show_employee, bg="light blue", height=2)
     search_b.grid(row=2, column=3, padx=20, pady=10, sticky="w")
 
-    remove_label = Label(employee_database, text="Enter removal ID:", font=("Bahnschrift", 10), bg="light green")
+    remove_label = Label(employee_database, text="Enter removal ID:", font=("Bahnschrift", 10), bg="light grey")
     remove_label.grid(row=3, column=1, pady=10, sticky="w", padx=10)
     removal_entry = Entry(employee_database, width=25)
     removal_entry.grid(row=3, column=2, pady=10, padx=5, sticky="w")
@@ -849,14 +849,14 @@ def Employeer_database():
         else:
             messagebox.showerror("Error", "Employee not found or error occurred.")
 
-    remove_b = Button(employee_database, text="Remove employee", width=20, command=handling_removal)
+    remove_b = Button(employee_database, text="Remove employee", width=20, command=handling_removal, bg="light blue", height=2)
     remove_b.grid(row=3, column=3, padx=20, pady=10, sticky="w")
 
 def bar():
     text = StringVar()
     text.set("Access all the feature by clicking OPEN, and Good luck, Have Fun!")
     bar = Label(root, textvariable=text)
-    bar.config(fg="black", bg="light blue", height=2)
+    bar.config(fg="white", bg="steel blue", height=2)
     bar.pack(side="bottom", fill="x")
 
 Home_page()
