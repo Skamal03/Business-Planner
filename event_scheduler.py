@@ -4,29 +4,29 @@ from tkinter import messagebox
 
 class EventScheduler:
     def __init__(self, filename="events.csv"):
-        self.filename = filename
-        self.event_scheduler = {}
-        self.event_id = 0
+        self.filename=filename
+        self.event_scheduler={}
+        self.event_id=0
         self.load_events()
 
     def load_events(self):
         try:
             with open(self.filename, mode='r', newline='') as file:
-                reader = csv.reader(file)
+                reader=csv.reader(file)
                 for row in reader:
                     if row:
-                        event_id = int(row[0])
-                        description = row[1]
-                        date_time = datetime.strptime(row[2], "%Y-%m-%d %H:%M")
-                        self.event_scheduler[event_id] = {"description": description, "date_time": date_time}
-                        self.event_id = max(self.event_id, event_id + 1)
+                        event_id=int(row[0])
+                        description=row[1]
+                        date_time=datetime.strptime(row[2], "%Y-%m-%d %H:%M")
+                        self.event_scheduler[event_id]={"description": description, "date_time": date_time}
+                        self.event_id=max(self.event_id, event_id + 1)
         except FileNotFoundError:
             pass
 
     def save_events(self):
         try:
             with open(self.filename, mode='w', newline='') as file:
-                writer = csv.writer(file)
+                writer=csv.writer(file)
                 for event_id, event in self.event_scheduler.items():
                     writer.writerow([event_id, event["description"], event["date_time"].strftime("%Y-%m-%d %H:%M")])
         except Exception as e:
@@ -35,16 +35,16 @@ class EventScheduler:
     def add_event(self, date_time, description):
         try:
 
-            date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+            date_time=datetime.strptime(date_time, "%Y-%m-%d %H:%M")
             self.event_scheduler[self.event_id] = {"description": description, "date_time": date_time}
             messagebox.showinfo("Success", f"Event added: ID {self.event_id} - {date_time} - {description}")
             self.save_events()
-            self.event_id += 1
+            self.event_id+=1
         except ValueError:
             messagebox.showerror("Error", "Field Empty or Invalid date-time format. Please use 'YYYY-MM-DD HH:MM'.")
 
     def sort_by_date(self):
-        event_list = list(self.event_scheduler.items())
+        event_list=list(self.event_scheduler.items())
         n = len(event_list)
         for i in range(n):
             for j in range(0, n - i - 1):
@@ -56,7 +56,7 @@ class EventScheduler:
         if not self.event_scheduler:
             return []
         sorted_events = self.sort_by_date()
-        formatted_events = []
+        formatted_events=[]
 
         for event_id, event in sorted_events:
             description = event['description']
@@ -74,13 +74,13 @@ class EventScheduler:
             return False
 
     def remove_past_events(self):
-        current_time = datetime.now()
-        events_removed = False
+        current_time=datetime.now()
+        events_removed=False
 
         for event_id, event in list(self.event_scheduler.items()):
             if event['date_time'] < current_time:
                 del self.event_scheduler[event_id]
-                events_removed = True
+                events_removed=True
 
         if events_removed:
             self.save_events()
