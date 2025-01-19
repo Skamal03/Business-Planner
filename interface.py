@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from PIL import Image, ImageTk
 from tkinter import messagebox
 from Task_manager import TaskManager
 from event_scheduler import EventScheduler
