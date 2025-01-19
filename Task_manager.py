@@ -4,33 +4,33 @@ from tkinter import messagebox
 
 class TaskNode:
     def __init__(self, task_id, description, priority, deadline, status="pending"):
-        self.task_id = task_id
-        self.description = description
-        self.priority = priority
-        self.deadline = deadline
-        self.status = status
-        self.next = None
+        self.task_id=task_id
+        self.description=description
+        self.priority=priority
+        self.deadline=deadline
+        self.status=status
+        self.next=None
 
 class TaskManager:
     def __init__(self, filename="tasks.csv"):
-        self.head = None
-        self.filename = filename
-        self.load_tasks()  # Load tasks from CSV when initializing
+        self.head=None
+        self.filename=filename
+        self.load_tasks()
 
     def load_tasks(self):
         try:
             with open(self.filename, mode='r', newline='') as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    if row:  # Skip empty rows
-                        task_id = int(row[0])
-                        description = row[1]
-                        priority = int(row[2])
-                        deadline = datetime.strptime(row[3], "%Y-%m-%d %H:%M")
+                    if row:
+                        task_id=int(row[0])
+                        description=row[1]
+                        priority=int(row[2])
+                        deadline=datetime.strptime(row[3], "%Y-%m-%d %H:%M")
                         status = row[4]
                         self.add_task_from_csv(task_id, description, priority, deadline, status)
         except FileNotFoundError:
-            pass  # No tasks yet, nothing to load
+            pass
 
     def save_tasks(self):
         try:
@@ -49,7 +49,7 @@ class TaskManager:
             deadline = datetime.strptime(deadline, "%Y-%m-%d %H:%M")
             new_task = TaskNode(task_id, description, priority, deadline)
 
-            # Traverse and sort tasks by priority
+
             if not self.head or priority < self.head.priority:
                 new_task.next = self.head
                 self.head = new_task
@@ -60,14 +60,13 @@ class TaskManager:
                 new_task.next = current.next
                 current.next = new_task
 
-            self.save_tasks()  # Save tasks after adding
+            self.save_tasks()
             messagebox.showinfo("Success", "Task added successfully")
             return task_id
         except Exception as e:
             messagebox.showerror("Error", f"Could not add task: {e}")
 
     def add_task_from_csv(self, task_id, description, priority, deadline, status):
-        # This method is used to create a task from CSV data
         new_task = TaskNode(task_id, description, priority, deadline, status)
 
         if not self.head or priority < self.head.priority:
@@ -81,10 +80,9 @@ class TaskManager:
             current.next = new_task
 
     def generate_task_id(self):
-        # Generate a unique task ID based on current tasks in CSV file
         if not self.head:
-            return 1  # First task
-        return self.head.task_id + 1  # Task ID is auto-generated based on linked list
+            return 1
+        return self.head.task_id + 1
 
     def remove_task(self, task_id):
         if not self.head:
@@ -92,7 +90,7 @@ class TaskManager:
 
         if self.head.task_id == task_id:
             self.head = self.head.next
-            self.save_tasks()  # Save after removal
+            self.save_tasks()
             return True
 
         current = self.head
@@ -101,7 +99,7 @@ class TaskManager:
 
         if current.next and current.next.task_id == task_id:
             current.next = current.next.next
-            self.save_tasks()  # Save after removal
+            self.save_tasks()
             return True
 
         return False
@@ -126,7 +124,7 @@ class TaskManager:
         current_time = datetime.now()
 
         while current:
-            # Checking current node's deadline
+
             if current.deadline < current_time:
                 if previous:
                     previous.next = current.next
@@ -137,14 +135,14 @@ class TaskManager:
                 previous = current
                 current = current.next
 
-        self.save_tasks()  # Save after removing expired tasks
+        self.save_tasks()
 
     def mark_task_as_done(self, task_id):
         current = self.head
         while current:
             if current.task_id == task_id:
                 current.status = "done"
-                self.save_tasks()  # Save after marking as done
+                self.save_tasks()
                 messagebox.showinfo("Success", f"Task {task_id} marked as done")
                 return True
             current = current.next
@@ -155,8 +153,8 @@ class TaskManager:
         current = self.head
         while current:
             if current.task_id == task_id:
-                current.status = "pending"  # Update status to "pending"
-                self.save_tasks()  # Save after marking as pending
+                current.status = "pending"
+                self.save_tasks()
                 messagebox.showinfo("Success", f"Task {task_id} marked as pending")
                 return True
             current = current.next
