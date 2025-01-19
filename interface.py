@@ -427,7 +427,7 @@ def Event_manager():
     past_b.grid(row=7, column=3, padx=10, pady=10, sticky="w")
 
 def Expense_manager():
-    main_label = Label(expense_manager, text="Event Manager", font=("Bahnschrift SemiBold", 30, "bold"))
+    main_label = Label(expense_manager, text="Expense Manager", font=("Bahnschrift SemiBold", 30, "bold"))
     main_label.grid(row=0, column=0, columnspan=10, pady=7, sticky="ns")
     main_label.config(fg="white", bg="light grey")
 
@@ -695,30 +695,30 @@ def Employeer_database():
     tree_frame = Frame(employee_database)
     tree_frame.grid(row=7, column=0, padx=10, pady=50, columnspan=20)
 
-    ex_tree = ttk.Treeview(tree_frame, height=17)
-    ex_tree["columns"] = (["ID", "Name", "Department", "Salary", "Working Hours"])
+    em_tree = ttk.Treeview(tree_frame, height=17)
+    em_tree["columns"] = (["ID", "Name", "Department", "Salary", "Working Hours"])
 
-    ex_tree.column("#0", width=0)
-    ex_tree.column("ID", width=50, anchor=W)
-    ex_tree.column("Name", width=150, anchor=W)
-    ex_tree.column("Department", width=150, anchor=W)
-    ex_tree.column("Salary", width=125, anchor=W)
-    ex_tree.column("Working Hours", width=175, anchor=W)
+    em_tree.column("#0", width=0)
+    em_tree.column("ID", width=50, anchor=W)
+    em_tree.column("Name", width=150, anchor=W)
+    em_tree.column("Department", width=150, anchor=W)
+    em_tree.column("Salary", width=125, anchor=W)
+    em_tree.column("Working Hours", width=175, anchor=W)
 
-    ex_tree.heading("#0", text="")
-    ex_tree.heading("ID", text="ID", anchor=W)
-    ex_tree.heading("Name", text="Name", anchor=W)
-    ex_tree.heading("Department", text="Department", anchor=W)
-    ex_tree.heading("Salary", text="Salary", anchor=W)
-    ex_tree.heading("Working Hours", text="Working Hours", anchor=W)
+    em_tree.heading("#0", text="")
+    em_tree.heading("ID", text="ID", anchor=W)
+    em_tree.heading("Name", text="Name", anchor=W)
+    em_tree.heading("Department", text="Department", anchor=W)
+    em_tree.heading("Salary", text="Salary", anchor=W)
+    em_tree.heading("Working Hours", text="Working Hours", anchor=W)
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Bahnschrift SemiBold", 12, 'bold'))
 
-    scrollbar = Scrollbar(tree_frame, command=ex_tree.yview)
-    ex_tree.config(yscrollcommand=scrollbar.set)
+    scrollbar = Scrollbar(tree_frame, command=em_tree.yview)
+    em_tree.config(yscrollcommand=scrollbar.set)
 
-    ex_tree.pack(side="left", expand=True, fill="both")
+    em_tree.pack(side="left", expand=True, fill="both")
     scrollbar.pack(side="right", expand=True, fill="both")
 
     def adding_in_treeview():
@@ -728,11 +728,11 @@ def Employeer_database():
             messagebox.showinfo("No Employees", "No employees to display.")
             return
 
-        for row in ex_tree.get_children():
-            ex_tree.delete(row)
+        for row in em_tree.get_children():
+            em_tree.delete(row)
 
         for emp in employee_data:
-            ex_tree.insert("", "end", values=emp)
+            em_tree.insert("", "end", values=emp)
 
 
     display_b = Button(employee_database, text="Display all Employees", width=20, command=adding_in_treeview, bg="light blue", height=2)
@@ -811,7 +811,7 @@ def Employeer_database():
         root.mainloop()
 
     def show_employee():
-        employee_id = salary_entry.get()
+        employee_id = search_entry.get()
         employee_data = employee.search_employee(employee_id)
 
         if employee_data:
@@ -819,10 +819,10 @@ def Employeer_database():
         else:
             messagebox.showinfo("Employee Not Found", f"No employee found with ID {employee_id}")
 
-    salary_label = Label(employee_database, text="Enter Search ID:", font=("Bahnschrift", 10), bg="light grey")
-    salary_label.grid(row=2, column=1, pady=10, sticky="w", padx=10)
-    salary_entry = Entry(employee_database, width=25)
-    salary_entry.grid(row=2, column=2, pady=10, padx=5, sticky="w")
+    search_label = Label(employee_database, text="Enter Search ID:", font=("Bahnschrift", 10), bg="light grey")
+    search_label.grid(row=2, column=1, pady=10, sticky="w", padx=10)
+    search_entry = Entry(employee_database, width=25)
+    search_entry.grid(row=2, column=2, pady=10, padx=5, sticky="w")
 
     search_b = Button(employee_database, text="search Employee", width=20, command=show_employee, bg="light blue", height=2)
     search_b.grid(row=2, column=3, padx=20, pady=10, sticky="w")
@@ -833,8 +833,8 @@ def Employeer_database():
     removal_entry.grid(row=3, column=2, pady=10, padx=5, sticky="w")
 
     def refresh_treeview():
-        for row in ex_tree.get_children():
-            ex_tree.delete(row)
+        for row in em_tree.get_children():
+            em_tree.delete(row)
 
         adding_in_treeview()
 
