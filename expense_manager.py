@@ -4,7 +4,7 @@ class BudgetManager:
     def __init__(self, filename="budgets.csv"):
         self.filename = filename
         self.budgets = {}
-        self.load_budgets()  # Load budgets from CSV when initializing
+        self.load_budgets()
 
     def load_budgets(self):
         try:
@@ -20,7 +20,7 @@ class BudgetManager:
                         self.budgets[name] = {"category": category, "amount": amount,
                                               "description": description, "status": status}
         except FileNotFoundError:
-            pass  # No budgets yet, nothing to load
+            pass
 
     def save_budgets(self):
         try:
@@ -34,7 +34,7 @@ class BudgetManager:
     def add_budget(self, name, amount, category, description):
         self.budgets[name] = {"category": category, "amount": amount,
                               "description": description, "status": "Pending"}
-        self.save_budgets()  # Save budgets after adding
+        self.save_budgets()
         print(f"Budget for {name} added successfully!")
 
     def view_budgets(self):
@@ -53,7 +53,7 @@ class BudgetManager:
     def approve_budget(self, name):
         if name in self.budgets:
             self.budgets[name]["status"] = "Approved"
-            self.save_budgets()  # Save budgets after approval
+            self.save_budgets()
             print(f"Budget for {name} approved.")
         else:
             print(f"No budget found with name {name}.")
@@ -61,7 +61,7 @@ class BudgetManager:
     def disapprove_budget(self, name):
         if name in self.budgets:
             self.budgets[name]["status"] = "Disapproved"
-            self.save_budgets()  # Save budgets after disapproval
+            self.save_budgets()
             print(f"Budget for {name} has been marked as disapproved.")
         else:
             print(f"No budget found with name {name}.")
