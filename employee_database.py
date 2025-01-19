@@ -12,7 +12,7 @@ class EmployeeDatabase:
         self.filename = filename
         self.head = None
         self.employee_id_counter = 1
-        self.load_employees()  # Load employees from CSV when initializing
+        self.load_employees()
 
     def load_employees(self):
         try:
@@ -22,7 +22,7 @@ class EmployeeDatabase:
                     if row:
                         employee_id = row[0]
                         fullname = row[1]
-                        fathername = row[2]  # Added fathername column
+                        fathername = row[2]
                         gender = row[3]
                         marital_status = row[4]
                         phone = row[5]
@@ -35,7 +35,7 @@ class EmployeeDatabase:
 
                         personal_info = {
                             "employee_id": employee_id, "fullname": fullname,
-                            "fathername": fathername,  # Load fathername from CSV
+                            "fathername": fathername,
                             "gender": gender, "marital_status": marital_status
                         }
                         contact_info = {"phone": phone, "email": email, "address": address}
@@ -43,10 +43,10 @@ class EmployeeDatabase:
 
                         self.add_employee_from_csv(personal_info, contact_info, job_details)
 
-                        # Update employee_id_counter based on the last employee_id
+
                         self.employee_id_counter = max(self.employee_id_counter, int(employee_id[3:]) + 1)
         except FileNotFoundError:
-            pass  # No employees yet, nothing to load
+            pass
 
     def save_employees(self):
         try:
@@ -100,8 +100,8 @@ class EmployeeDatabase:
         current = self.head
         while current:
             employee_data = [current.personal_info.get("employee_id"), current.personal_info.get("fullname"),
-                             current.personal_info.get("fathername"),  # Display fathername
-                             current.job_details.get("department"), current.job_details.get("salary"),
+                             current.job_details.get("department"),
+                             current.job_details.get("salary"),
                              current.job_details.get("hours_per_week")]
             employees.append(employee_data)
             current = current.next
