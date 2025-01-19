@@ -14,12 +14,12 @@ class EventScheduler:
             with open(self.filename, mode='r', newline='') as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    if row:  # Skip empty rows
+                    if row:
                         event_id = int(row[0])
                         description = row[1]
                         date_time = datetime.strptime(row[2], "%Y-%m-%d %H:%M")
                         self.event_scheduler[event_id] = {"description": description, "date_time": date_time}
-                        self.event_id = max(self.event_id, event_id + 1)  # Ensure event_id is unique and incremented
+                        self.event_id = max(self.event_id, event_id + 1)
         except FileNotFoundError:
             pass
 
@@ -34,7 +34,7 @@ class EventScheduler:
 
     def add_event(self, date_time, description):
         try:
-            # Parse the date_time string into a datetime object
+
             date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
             self.event_scheduler[self.event_id] = {"description": description, "date_time": date_time}
             messagebox.showinfo("Success", f"Event added: ID {self.event_id} - {date_time} - {description}")
